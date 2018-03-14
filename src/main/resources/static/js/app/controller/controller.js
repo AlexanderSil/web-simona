@@ -1,6 +1,4 @@
-
-
-var app = angular.module('my-App', []);
+'use strict';
 
 app.controller('controller', function($scope, $filter) {
     $scope.clickfunction = function(){
