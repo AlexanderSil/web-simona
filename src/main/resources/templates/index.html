@@ -1,117 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html ng-app="simonaApp" ng-cloak>
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="js/lib/angular-1.6.9/angular.min.js"></script>
-    <script src="js/lib/angular-1.6.9/angular-route.js"></script>
-    <script src="js/app/app.js"></script>
-    <script src="js/app/controller/controller.js"></script>
+    <title>Simona</title>
+    <base href="/">
 
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Script-Type" content="text/javascript">
+    <meta http-equiv="Content-Style-Type" content="text/css">
 
+    <link rel="icon" type="image/png" href="/images/images.jpeg">
 </head>
-<body ng-app="my-App">
-<a href="#!first">First</a>
-<div ng-view></div>
-<!--
-div ng-app="my-App" ng-controller="controller">
-    <button id="btn-id" ng-click="clickfunction()">Press for Time</button>
-    <p ng-bind="welcome"></p>
-</div>
--->
-</body>
-<!--<body ng-app="hello" ng-cloak class="ng-cloak">
-    <div ng-controller="navigation" class="container">
-        <ul class="nav nav-pills" role="tablist">
-            <li class="active"><a href="#/">home</a></li>
-            <li><a href="#/login">login</a></li>
-            <li ng-show="authenticated"><a href="" ng-click="logout()">logout</a></li>
-        </ul>
-    </div>
-    <div ng-view class="container"></div>
-</body>-->
-<!--
-<body ng-app="my-App">
-<div class="generic-container" ng-controller="UserController as ctrl">
-    <div class="panel panel-default">
-        <div class="panel-heading"><span class="lead">User Registration Form </span></div>
-        <div class="formcontainer">
-            <form ng-submit="ctrl.submit()" name="myForm" class="form-horizontal">
-                <input type="hidden" ng-model="ctrl.user.id" />
-                <div class="row">
-                    <div class="form-group col-md-12">
-                        <label class="col-md-2 control-lable" for="uname">Name</label>
-                        <div class="col-md-7">
-                            <input type="text" ng-model="ctrl.user.name" id="uname" class="username form-control input-sm" placeholder="Enter your name" required ng-minlength="3"/>
-                            <div class="has-error" ng-show="myForm.$dirty">
-                                <span ng-show="myForm.uname.$error.required">This is a required field</span>
-                                <span ng-show="myForm.uname.$error.minlength">Minimum length required is 3</span>
-                                <span ng-show="myForm.uname.$invalid">This field is invalid </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <body ng-controller="MainController">
 
 
-                <div class="row">
-                    <div class="form-group col-md-12">
-                        <label class="col-md-2 control-lable" for="age">Age</label>
-                        <div class="col-md-7">
-                            <input type="number" ng-model="ctrl.user.age" id="age" class="form-control input-sm" placeholder="Enter your Age"/>
-                        </div>
-                    </div>
-                </div>
+        <div class="row simonaMonitoring">
+            <div class="col-sm-2">
+                <div><button id="btn-id" ng-click="clickfunctionZoom4()">Zoom 4</button></div>
 
-                <div class="row">
-                    <div class="form-group col-md-12">
-                        <label class="col-md-2 control-lable" for="salary">Salary</label>
-                        <div class="col-md-7">
-                            <input type="number" ng-model="ctrl.user.salary" id="salary" class="form-control input-sm" placeholder="Enter your Salary" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01" required/>
-                            <div class="has-error" ng-show="myForm.$dirty">
-                                <span ng-show="myForm.salary.$error.required">This is a required field</span>
-                                <span ng-show="myForm.salary.$invalid">This field is invalid </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div><button id="btn-id1" ng-click="clickfunctionZoom14()">Zoom 14</button></div>
 
-                <div class="row">
-                    <div class="form-actions floatRight">
-                        <input type="submit"  value="{{!ctrl.user.id ? 'Add' : 'Update'}}" class="btn btn-primary btn-sm" ng-disabled="myForm.$invalid">
-                        <button type="button" ng-click="ctrl.reset()" class="btn btn-warning btn-sm" ng-disabled="myForm.$pristine">Reset Form</button>
-                    </div>
-                </div>
-            </form>
+                <div ng-include='"partials/header.html"'></div>
+
+                <div ng-view class="angular-view"></div>
+
+                <div ng-include='"partials/footer.html"'></div>
+            </div>
+
+            <div class="col-sm-10">
+                <div id="mapDiv"></div>
+            </div>
         </div>
-    </div>
-    <div class="panel panel-default">
-         Default panel contents
-        <div class="panel-heading"><span class="lead">List of Users </span></div>
-        <div class="tablecontainer">
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th>ID.</th>
-                    <th>Name</th>
-                    <th>Age</th>
-                    <th>Salary</th>
-                    <th width="100">
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="u in ctrl.users">
-                    <td><span ng-bind="u.id"></span></td>
-                    <td><span ng-bind="u.name"></span></td>
-                    <td><span ng-bind="u.age"></span></td>
-                    <td><span ng-bind="u.salary"></span></td>
-                    <td>
-                        <button type="button" ng-click="ctrl.edit(u.id)" class="btn btn-success custom-width">Edit</button>  <button type="button" ng-click="ctrl.remove(u.id)" class="btn btn-danger custom-width">Remove</button>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
--->
+
+
+
+
+
+
+
+
+<!--JavaScript files-->
+        <!-- load AngularJS -->
+        <script src="js/lib/angular-1.6.9/angular.min.js"></script>
+        <script src="js/lib/angular-1.6.9/angular-route.js"></script>
+        <!--<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-route.js"></script>-->
+        <!--<script src="js/lib/angular-1.6.9/angular-route.js"></script>-->
+        <!--<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-resource.js"></script>-->
+        <script src="js/lib/angular-1.6.9/angular-resource.js"></script>
+        <!--<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-cookies.js"></script>-->
+        <script src="js/lib/angular-1.6.9/angular-cookies.js"></script>
+
+        <!--Load ArcGIS ESRI-->
+        <!-- load Esri JSAPI https://developers.arcgis.com -->
+        <script src="https://js.arcgis.com/4.6/"></script>
+        <!-- load angular-esri-map  https://esri.github.io/angular-esri-map/#/examples/feature-layer -->
+        <script src="https://unpkg.com/angular-esri-map@2"></script>
+        <!--Load CSS file-->
+        <link rel="stylesheet" href="https://js.arcgis.com/4.6/esri/css/main.css">
+
+        <!--Local JS files-->
+        <script src="js/app/simonaApp.js"></script>
+        <script src="js/app/controller/controller.js"></script>
+        <!--<script src="js/app/controller/MapController.js"></script>-->
+        <!--<script src="js/app/controller/AdminController.js"></script>-->
+        <script src="js/app/service/Service.js"></script>
+
+<!-- CSS files -->
+        <link type="text/css" rel="stylesheet" href="css/app-main.css">
+
+        <!--<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>-->
+        <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+
+        <!--<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>-->
+        <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>-->
+
+
+        <!--<script src="lib/bootstrap/bootstrap.js"></script>-->
+        <!--<script src="lib/bootstrap/bootstrap.bundle.js"></script>-->
+        <!--<link type="text/css" rel="stylesheet" href="lib/bootstrap/css/bootstrap.css">-->
+        <!--<link type="application/json" rel="stylesheet" href="css/lib/bootstrap-v4.0.0/bootstrap-grid.css">-->
+        <!--<link type="text/css" rel="stylesheet" href="lib/bootstrap/css/bootstrap-reboot.css">-->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>-->
+    </body>
 </html>
