@@ -30,44 +30,60 @@ simonaApp.controller('MainController', function ($scope, $location, esriLoader) 
 
         });
 
-        var graphicsLayer = new GraphicsLayer();
-        map.add(graphicsLayer);
+
 
         var view = new MapView({
             container: "mapDiv",
             map: map,
             zoom: 14,
-            center: [36.2304, 49.9935]
+            center: [36.227969, 49.988633]
         });
 
         view.then(function () {
             view.popup.dockEnabled = true;
         });
 
-        var graphic = new Graphic({
-            attribute: "photo",
-            geometry: new Point({
-                longitude: 36.2304,
-                latitude: 49.9935
-            }),
-            symbol: new PictureMarkerSymbol({
-                url: "images/favicon.ico"
-            }),
-            popupTemplate: {
-                content: [{
-                    type: "media",
-                    mediaInfos: [{
-                        type: "image",
-                        value: {
-                            sourceURL: "images/favicon.ico"
-                        },
-                        caption: "Caption"
-                    }]
-                }]
-            }
-        });
+        function getPhoto(url, latitude, longitude) {
+            return new Graphic({
+                attribute: "photo",
+                geometry: new Point({
+                    longitude: longitude,
+                    latitude: latitude
+                }),
+                symbol: new PictureMarkerSymbol({
+                    width: 25,
+                    height: 25,
+                    url: url
+                }),
+                popupTemplate: {
+                    title: " Title "
+                    // content: [{
+                    //     type: "media",
+                    //     mediaInfos: [{
+                    //         type: "image",
+                            // value: {
+                            //     sourceURL: url
+                            // },
+                        //     caption: "255 3 05701 00201"
+                        // }]
+                    // }]
+                }
+            });
+        }
 
-        graphicsLayer.add(graphic);
+
+        var graphicsLayer = new GraphicsLayer();
+
+        map.add(graphicsLayer);
+
+        graphicsLayer.add(getPhoto("images/pointer.png", 49.988633, 36.227969));
+        graphicsLayer.add(getPhoto("images/1.png", 49.988982, 36.222230));
+        graphicsLayer.add(getPhoto("images/2.png", 49.991795, 36.223775));
+        graphicsLayer.add(getPhoto("images/3.png", 49.993422, 36.235448));
+        graphicsLayer.add(getPhoto("images/4.png", 49.985502, 36.224590));
+        graphicsLayer.add(getPhoto("images/5.png", 49.985722, 36.227379));
+        graphicsLayer.add(getPhoto("images/6.png", 49.992371, 36.230297));
+        graphicsLayer.add(getPhoto("images/7.png", 49.992065, 36.229610));
 
         /**********************
          * Create a point graphic Tracking
@@ -95,6 +111,7 @@ simonaApp.controller('MainController', function ($scope, $location, esriLoader) 
 
         // Add the graphics to the view's graphics layer
         view.graphics.add(pointGraphicTrack);
+        $scope.mapView = view;
 
     });
 
