@@ -8,48 +8,30 @@ simonaApp.controller('MainController', function ($scope, $location, esriLoader) 
     //     }
     // }
     esriLoader.require([
+        "jquery",
         "esri/Map",
         "esri/views/MapView",
+        "esri/layers/GraphicsLayer",
         "esri/layers/MapImageLayer",
-
         "esri/PopupTemplate",
         "esri/Graphic",
         "esri/geometry/Point",
+        "esri/geometry/Polyline",
+        "esri/symbols/PictureMarkerSymbol",
+        "esri/symbols/SimpleLineSymbol",
 
 
         "dojo/domReady!"
-    ], function(Map, MapView, MapImageLayer, PopupTemplate, Graphic, Point){
+    ], function($, Map, MapView, GraphicsLayer, MapImageLayer, PopupTemplate,
+                Graphic, Point, Polyline, PictureMarkerSymbol, SimpleLineSymbol){
 
         var map = new Map({
-            basemap: "streets",
+            basemap: "streets"
 
         });
-        /**********************
-         * Create a point graphic
-         **********************/
-            // First create a point geometry
-        var point = new Point({
-                longitude: 36.2304,
-                latitude: 49.9935
-            });
 
-        // Create a symbol for drawing the point
-        var textSymbol = {
-            type: "text", // autocasts as new TextSymbol()
-            color: "#7A003C",
-            text: "\ue61d", // esri-icon-map-pin
-            font: { // autocasts as new Font()
-                size: 30,
-                family: "CalciteWebCoreIcons"
-            }
-        };
-
-        // Create a graphic and add the geometry and symbol to it
-        var pointGraphic = new Graphic({
-            geometry: point,
-            symbol: textSymbol
-        });
-
+        var graphicsLayer = new GraphicsLayer();
+        map.add(graphicsLayer);
 
         var view = new MapView({
             container: "mapDiv",
@@ -57,13 +39,62 @@ simonaApp.controller('MainController', function ($scope, $location, esriLoader) 
             zoom: 14,
             center: [36.2304, 49.9935]
         });
+
+        view.then(function () {
+            view.popup.dockEnabled = true;
+        });
+
+        var graphic = new Graphic({
+            attribute: "photo",
+            geometry: new Point({
+                longitude: 36.2304,
+                latitude: 49.9935
+            }),
+            symbol: new PictureMarkerSymbol({
+                url: "images/favicon.ico"
+            }),
+            popupTemplate: {
+                content: [{
+                    type: "media",
+                    mediaInfos: [{
+                        type: "image",
+                        value: {
+                            sourceURL: "images/favicon.ico"
+                        },
+                        caption: "Caption"
+                    }]
+                }]
+            }
+        });
+
+        graphicsLayer.add(graphic);
+
+        /**********************
+         * Create a point graphic Tracking
+         **********************/
+            // First create a point geometry
+        var pointTrack = new Point({
+                longitude: 36.2304,
+                latitude: 49.9935
+            });
+        // Create a symbol for drawing the point
+        var textSymbolTracking = {
+            type: "text", // autocasts as new TextSymbol()
+            color: "#007a0a",
+            text: "\ue69b", // esri-icon-tracking (https://developers.arcgis.com/javascript/latest/guide/esri-icon-font/index.html#esri-icon-fonts)
+            font: { // autocasts as new Font()
+                size: 30,
+                family: "CalciteWebCoreIcons"
+            }
+        };
+        // Create a graphic and add the geometry and symbol to it
+        var pointGraphicTrack = new Graphic({
+            geometry: pointTrack,
+            symbol: textSymbolTracking
+        });
+
         // Add the graphics to the view's graphics layer
-        view.graphics.add(pointGraphic);
-
-
-
-
-        $scope.mapView = view;
+        view.graphics.add(pointGraphicTrack);
 
     });
 
