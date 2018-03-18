@@ -19,18 +19,17 @@ simonaApp.controller('MainController', function ($scope, $location, esriLoader) 
         "esri/geometry/Polyline",
         "esri/symbols/PictureMarkerSymbol",
         "esri/symbols/SimpleLineSymbol",
+        "esri/widgets/ScaleBar",
 
 
         "dojo/domReady!"
-    ], function($, Map, MapView, GraphicsLayer, MapImageLayer, PopupTemplate,
-                Graphic, Point, Polyline, PictureMarkerSymbol, SimpleLineSymbol){
+    ], function($, Map, MapView, GraphicsLayer, MapImageLayer, PopupTemplate, Graphic, Point, Polyline,
+                PictureMarkerSymbol, SimpleLineSymbol, ScaleBar){
 
         var map = new Map({
             basemap: "streets"
 
         });
-
-
 
         var view = new MapView({
             container: "mapDiv",
@@ -39,11 +38,21 @@ simonaApp.controller('MainController', function ($scope, $location, esriLoader) 
             center: [36.227969, 49.988633]
         });
 
+        /********************
+         * Add Scale bar
+         *******************/
+        var scaleBar = new ScaleBar({
+            view: view,
+            unit: "metric" // The scale bar displays metric units.
+        });
+        view.ui.add(scaleBar, {position: "bottom-right"});
+        view.ui.move("zoom", "top-right");
+
         view.then(function () {
             view.popup.dockEnabled = true;
         });
 
-        function getPhoto(url, latitude, longitude) {
+        function getImage(url, latitude, longitude) {
             return new Graphic({
                 attribute: "photo",
                 geometry: new Point({
@@ -55,8 +64,12 @@ simonaApp.controller('MainController', function ($scope, $location, esriLoader) 
                     height: 25,
                     url: url
                 }),
-                popupTemplate: {
-                    title: " Title "
+                popupTemplate: { // autocasts as new PopupTemplate()
+                    title: "Title",
+                    content: "255 3 05701 00201"
+                }
+                // popupTemplate: {
+                //     title: " Title "
                     // content: [{
                     //     type: "media",
                     //     mediaInfos: [{
@@ -67,7 +80,7 @@ simonaApp.controller('MainController', function ($scope, $location, esriLoader) 
                         //     caption: "255 3 05701 00201"
                         // }]
                     // }]
-                }
+                // }
             });
         }
 
@@ -76,19 +89,20 @@ simonaApp.controller('MainController', function ($scope, $location, esriLoader) 
 
         map.add(graphicsLayer);
 
-        graphicsLayer.add(getPhoto("images/pointer.png", 49.988633, 36.227969));
-        graphicsLayer.add(getPhoto("images/1.png", 49.988982, 36.222230));
-        graphicsLayer.add(getPhoto("images/2.png", 49.991795, 36.223775));
-        graphicsLayer.add(getPhoto("images/3.png", 49.993422, 36.235448));
-        graphicsLayer.add(getPhoto("images/4.png", 49.985502, 36.224590));
-        graphicsLayer.add(getPhoto("images/5.png", 49.985722, 36.227379));
-        graphicsLayer.add(getPhoto("images/6.png", 49.992371, 36.230297));
-        graphicsLayer.add(getPhoto("images/7.png", 49.992065, 36.229610));
+        graphicsLayer.add(getImage("images/pointer.png", 49.988633, 36.227969));
+        graphicsLayer.add(getImage("images/1.png", 49.988982, 36.222230));
+        graphicsLayer.add(getImage("images/2.png", 49.991795, 36.223775));
+        graphicsLayer.add(getImage("images/3.png", 49.993422, 36.235448));
+        graphicsLayer.add(getImage("images/4.png", 49.985502, 36.224590));
+        graphicsLayer.add(getImage("images/5.png", 49.985722, 36.227379));
+        graphicsLayer.add(getImage("images/6.png", 49.992371, 36.230297));
+        graphicsLayer.add(getImage("images/7.png", 49.992065, 36.229610));
+
 
         /**********************
          * Create a point graphic Tracking
          **********************/
-            // First create a point geometry
+        /*    // First create a point geometry
         var pointTrack = new Point({
                 longitude: 36.2304,
                 latitude: 49.9935
@@ -111,23 +125,11 @@ simonaApp.controller('MainController', function ($scope, $location, esriLoader) 
 
         // Add the graphics to the view's graphics layer
         view.graphics.add(pointGraphicTrack);
+        */
+
+
         $scope.mapView = view;
-
     });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
