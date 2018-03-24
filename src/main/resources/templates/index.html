@@ -2,6 +2,7 @@
 <html ng-app="simonaApp" ng-cloak>
 
 <head>
+    <link rel="icon" type="image/png" href="/images/icon.jpeg">
     <title>Simona</title>
     <base href="/">
 
@@ -9,78 +10,70 @@
     <meta http-equiv="Content-Script-Type" content="text/javascript">
     <meta http-equiv="Content-Style-Type" content="text/css">
 
-    <link rel="icon" type="image/png" href="/images/images.jpeg">
 </head>
     <body ng-controller="MainController">
 
+    <div class="container container-fluid h-100 d-flex flex-col">
+        <div style="width: 100%;" class="grid">
+            <div class="row h-100">
+                <div class="col-sm-3">
+                    <div ng-include='"partials/header.html"'></div>
 
-        <div class="row simonaMonitoring">
-            <div class="col-sm-2">
-                <div><button id="btn-id" ng-click="clickfunctionZoom4()">Zoom 4</button></div>
+                    Regions:
+                    <div ng-repeat="item in regions">
+                        {{item.id}}'{{item.latitudeX}}'{{item.latitudeY}}'{{item.longitudeX}}'{{item.longitudeY}}
+                    </div>
 
-                <div><button id="btn-id1" ng-click="clickfunctionZoom14()">Zoom 14</button></div>
+                    MRMS:
+                    <div ng-repeat="item in mrms">
+                        {{item.id}}'{{item.latitude}}'{{item.longitude}}'{{item.type}}
+                    </div>
 
-                <div ng-include='"partials/header.html"'></div>
+                    Base Stations:
+                    <div ng-repeat="item in baseStations">
+                        {{item.id}}'{{item.latitude}}'{{item.longitude}}'{{item.type}}
+                    </div>
 
-                <div ng-view class="angular-view"></div>
+                    <div ng-view class="angular-view"></div>
 
-                <div ng-include='"partials/footer.html"'></div>
-            </div>
-
-            <div class="col-sm-10">
-                <div id="mapDiv"></div>
+                    <div ng-include='"partials/footer.html"'></div>
+                </div>
+                <div class="col-sm-9 map">
+                    <div id="mapDiv"></div>
+                </div>
             </div>
         </div>
+    </div>
 
 
+    <!--JavaScript and CSS files-->
+    <!-- load AngularJS -->
+    <script src="js/lib/angular-1.6.9/angular.min.js"></script>
+    <script src="js/lib/angular-1.6.9/angular-route.js"></script>
+    <script src="js/lib/angular-1.6.9/angular-resource.js"></script>
+    <script src="js/lib/angular-1.6.9/angular-cookies.js"></script>
 
+    <!--Load ArcGIS ESRI-->
+    <script src="https://js.arcgis.com/4.6/"></script>
+    <script src="https://unpkg.com/angular-esri-map@2"></script>
+    <!--Load CSS file-->
+    <link rel="stylesheet" href="https://js.arcgis.com/4.6/esri/css/main.css">
 
+    <!-- Load jQuery-->
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css"/>
 
+    <!--Local JS files-->
+    <script src="js/app/simonaApp.js"></script>
+    <script src="js/app/controller/Controller.js"></script>
+    <script src="js/app/service/Service.js"></script>
+    <script src="js/app/resize.js"></script>
 
+    <!-- Load Bootstrap 4-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-
-<!--JavaScript files-->
-        <!-- load AngularJS -->
-        <script src="js/lib/angular-1.6.9/angular.min.js"></script>
-        <script src="js/lib/angular-1.6.9/angular-route.js"></script>
-        <!--<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-route.js"></script>-->
-        <!--<script src="js/lib/angular-1.6.9/angular-route.js"></script>-->
-        <!--<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-resource.js"></script>-->
-        <script src="js/lib/angular-1.6.9/angular-resource.js"></script>
-        <!--<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-cookies.js"></script>-->
-        <script src="js/lib/angular-1.6.9/angular-cookies.js"></script>
-
-        <!--Load ArcGIS ESRI-->
-        <!-- load Esri JSAPI https://developers.arcgis.com -->
-        <script src="https://js.arcgis.com/4.6/"></script>
-        <!-- load angular-esri-map  https://esri.github.io/angular-esri-map/#/examples/feature-layer -->
-        <script src="https://unpkg.com/angular-esri-map@2"></script>
-        <!--Load CSS file-->
-        <link rel="stylesheet" href="https://js.arcgis.com/4.6/esri/css/main.css">
-
-        <!--Local JS files-->
-        <script src="js/app/simonaApp.js"></script>
-        <script src="js/app/controller/Controller.js"></script>
-        <!--<script src="js/app/controller/MapController.js"></script>-->
-        <!--<script src="js/app/controller/AdminController.js"></script>-->
-        <script src="js/app/service/Service.js"></script>
-
-<!-- CSS files -->
-        <link type="text/css" rel="stylesheet" href="css/app-main.css">
-
-        <!--<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>-->
-        <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
-
-        <!--<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>-->
-        <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>-->
-
-
-        <!--<script src="lib/bootstrap/bootstrap.js"></script>-->
-        <!--<script src="lib/bootstrap/bootstrap.bundle.js"></script>-->
-        <!--<link type="text/css" rel="stylesheet" href="lib/bootstrap/css/bootstrap.css">-->
-        <!--<link type="application/json" rel="stylesheet" href="css/lib/bootstrap-v4.0.0/bootstrap-grid.css">-->
-        <!--<link type="text/css" rel="stylesheet" href="lib/bootstrap/css/bootstrap-reboot.css">-->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>-->
+    <!-- CSS files -->
+    <link type="text/css" rel="stylesheet" href="css/app-main.css">
     </body>
 </html>

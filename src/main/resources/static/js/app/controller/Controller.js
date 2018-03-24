@@ -1,4 +1,5 @@
-simonaApp.controller('MainController', function ($scope, $location, esriLoader) {
+
+simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoader', 'MonitoringService', function ($scope, $http, $location, esriLoader, MonitoringService) {
     // $scope.currentPath = $location.path();
     // $scope.getClass = function(path) {
     //     if ($location.path() == path) {
@@ -20,17 +21,19 @@ simonaApp.controller('MainController', function ($scope, $location, esriLoader) 
         "esri/symbols/PictureMarkerSymbol",
         "esri/symbols/SimpleLineSymbol",
         "esri/widgets/ScaleBar",
-
+        "esri/core/watchUtils",
 
         "dojo/domReady!"
     ], function($, Map, MapView, GraphicsLayer, MapImageLayer, PopupTemplate, Graphic, Point, Polyline,
-                PictureMarkerSymbol, SimpleLineSymbol, ScaleBar){
+                PictureMarkerSymbol, SimpleLineSymbol, ScaleBar, watchUtils){
 
+        /********************
+         * Create Map and MapView - general element ArcGis(ESRI)
+         * https://developers.arcgis.com/javascript/latest/api-reference/esri-views-MapView.html
+         *******************/
         var map = new Map({
             basemap: "streets"
-
         });
-
         var view = new MapView({
             container: "mapDiv",
             map: map,
@@ -43,15 +46,23 @@ simonaApp.controller('MainController', function ($scope, $location, esriLoader) 
          *******************/
         var scaleBar = new ScaleBar({
             view: view,
-            unit: "metric" // The scale bar displays metric units.
+            unit: "metric"
         });
         view.ui.add(scaleBar, {position: "bottom-right"});
+
+        /********************
+         * Move zoom buttons top-right
+         *******************/
         view.ui.move("zoom", "top-right");
+
 
         view.then(function () {
             view.popup.dockEnabled = true;
         });
 
+        /*********************
+         * Create Graphic object on the map.
+         *********************/
         function getImage(url, latitude, longitude) {
             return new Graphic({
                 attribute: "photo",
@@ -83,11 +94,10 @@ simonaApp.controller('MainController', function ($scope, $location, esriLoader) 
                 // }
             });
         }
-
-
-        var graphicsLayer = new GraphicsLayer();
-
+        var graphicsLayer = new GraphicsLayer();/*** Add graphic layer*/
         map.add(graphicsLayer);
+
+
 
         graphicsLayer.add(getImage("images/pointer.png", 49.988633, 36.227969));
         graphicsLayer.add(getImage("images/1.png", 49.988982, 36.222230));
@@ -99,47 +109,49 @@ simonaApp.controller('MainController', function ($scope, $location, esriLoader) 
         graphicsLayer.add(getImage("images/7.png", 49.992065, 36.229610));
 
 
-        /**********************
-         * Create a point graphic Tracking
-         **********************/
-        /*    // First create a point geometry
-        var pointTrack = new Point({
-                longitude: 36.2304,
-                latitude: 49.9935
-            });
-        // Create a symbol for drawing the point
-        var textSymbolTracking = {
-            type: "text", // autocasts as new TextSymbol()
-            color: "#007a0a",
-            text: "\ue69b", // esri-icon-tracking (https://developers.arcgis.com/javascript/latest/guide/esri-icon-font/index.html#esri-icon-fonts)
-            font: { // autocasts as new Font()
-                size: 30,
-                family: "CalciteWebCoreIcons"
+
+        /*********************
+         * Get distance between two points (Point.between(Point))
+         *********************/
+        var point1 = getImage("images/7.png", 49.992065, 36.229610);
+        var point2 = getImage("images/6.png", 49.992371, 36.230297);
+        point1.geometry.distance(point2.geometry)
+
+
+        /***********************************
+         *  Event on change zoom.
+         ************************************/
+        watchUtils.watch(view, "zoom", function (zoom) {
+            if (zoom % 1 !== 0) {/** zoom in progress */}
+            else {/**  finished zoom */
+                console.log("Zoom is now - " + zoom);
             }
-        };
-        // Create a graphic and add the geometry and symbol to it
-        var pointGraphicTrack = new Graphic({
-            geometry: pointTrack,
-            symbol: textSymbolTracking
         });
-
-        // Add the graphics to the view's graphics layer
-        view.graphics.add(pointGraphicTrack);
-        */
-
-
-        $scope.mapView = view;
     });
 
 
 
-    $scope.clickfunctionZoom4 = function(){
-        $scope.mapView.zoom = 4;
-    };
-    $scope.clickfunctionZoom14 = function(){
-        $scope.mapView.zoom = 14;
-    };
-});
+    /***********************************
+     *  Get data from server.
+     ************************************/
+    MonitoringService.getRegions()
+        .then(function success(response) {
+                $scope.regions = response.data;
+                $scope.mrms = response.data[0].mobileRadioMonitoringStations;
+                $scope.baseStations = response.data[0].mobileRadioMonitoringStations[0].baseStations;
+                // console.log("MonitoringService.getRegions data - " + JSON.parse(response.data));
+            },
+            function error (response) {
+                $scope.message = '';
+                if (response.status === 404){
+                    console.log("Regions not found!");
+                }
+                else {
+                    console.log("Error getting regions!");
+                }
+            });
+
+}]);
 
 simonaApp.controller('MonitoringController', function ($scope, $filter, esriLoader) {
 

@@ -11,3 +11,134 @@ html, body, .esri-view {
     height: 100%;
     width: 100%;
 }
+
+/* Visual Aids */
+
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    margin: 0;
+    border: 0;
+    padding: 0;
+}
+
+.container {
+    /*margin-top: 50px;*/
+    max-width: 100%;
+}
+
+.row {
+    background-color: rgba(189, 195, 199, 0.25);
+}
+
+.row:hover {
+    background-color: rgba(189, 195, 199, 0.5);
+}
+
+.row > .col-xs-1,
+.row > .col-xs-2,
+.row > .col-xs-3,
+.row > .col-xs-4,
+.row > .col-xs-5,
+.row > .col-xs-6,
+.row > .col-xs-7,
+.row > .col-xs-8,
+.row > .col-xs-9,
+.row > .col-xs-10,
+.row > .col-xs-11,
+.row > .col-xs-12 {
+    min-height: 100px;
+}
+
+.row > .col-xs-1:before,
+.row > .col-xs-2:before,
+.row > .col-xs-3:before,
+.row > .col-xs-4:before,
+.row > .col-xs-5:before,
+.row > .col-xs-6:before,
+.row > .col-xs-7:before,
+.row > .col-xs-8:before,
+.row > .col-xs-9:before,
+.row > .col-xs-10:before,
+.row > .col-xs-11:before,
+.row > .col-xs-12:before {
+    content: '';
+
+    display: block;
+
+    position: absolute;
+    top: 0;
+    right: 15px;
+    bottom: 0;
+    left: 15px;
+
+    background-color: rgba(52, 152, 219, 0.25);
+}
+
+.row > .col-xs-1:hover:before,
+.row > .col-xs-2:hover:before,
+.row > .col-xs-3:hover:before,
+.row > .col-xs-4:hover:before,
+.row > .col-xs-5:hover:before,
+.row > .col-xs-6:hover:before,
+.row > .col-xs-7:hover:before,
+.row > .col-xs-8:hover:before,
+.row > .col-xs-9:hover:before,
+.row > .col-xs-10:hover:before,
+.row > .col-xs-11:hover:before,
+.row > .col-xs-12:hover:before {
+    background-color: rgba(52, 152, 219, 0.5);
+}
+
+/* Resizable Grid */
+
+.resizable-grid > .resizable-row > .resizable-column > .resizable-column-handle {
+    z-index: 100;
+
+    display: none;
+
+    position: absolute;
+    top: 0;
+
+    height: 100%;
+    width: 6px;
+
+    cursor: col-resize;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -sm-user-select: none;
+    user-select: none;
+
+    -sm-touch-action: none;
+    touch-action: none;
+}
+
+.resizable-grid > .resizable-row > .resizable-column > .resizable-column-handle-w {
+    left: 1px;
+    display: none;
+}
+
+.resizable-grid > .resizable-row > .resizable-column > .resizable-column-handle-e {
+    right: 0px;
+}
+
+.resizable-grid > .resizable-row > .resizable-column:first-child:not(:last-child) > .resizable-column-handle-e,
+.resizable-grid > .resizable-row > .resizable-column:not(:first-child):not(:last-child) > .resizable-column-handle-w,
+.resizable-grid > .resizable-row > .resizable-column:not(:first-child):not(:last-child) > .resizable-column-handle-e,
+.resizable-grid > .resizable-row > .resizable-column:last-child:not(:first-child) > .resizable-column-handle-w {
+    display: block;
+}
+
+.resizable-grid-resizing {
+    cursor: col-resize;
+}
+
+.resizable-grid > .resizable-row-resizing > .resizable-column:not(.resizable-column-resizing) {
+    opacity: 0.5;
+}
