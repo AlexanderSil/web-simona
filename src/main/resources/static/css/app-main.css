@@ -31,11 +31,11 @@ body {
 }
 
 .row {
-    background-color: rgba(189, 195, 199, 0.25);
+    background-color: rgba(245, 251, 255, 0);
 }
 
 .row:hover {
-    background-color: rgba(189, 195, 199, 0.5);
+    background-color: rgba(245, 251, 255, 0);
 }
 
 .row > .col-xs-1,
@@ -141,4 +141,90 @@ body {
 
 .resizable-grid > .resizable-row-resizing > .resizable-column:not(.resizable-column-resizing) {
     opacity: 0.5;
+}
+
+.mrms, .detected {
+    padding-left: 25px;
+}
+
+
+.plus-minus {
+
+}
+.css-label {
+    cursor: pointer;
+}
+.css-checkbox {
+    display: none;
+}
+.fa {
+    color: white;
+    line-height: 16px;
+    border-radius: 4px;
+}
+.fa-plus {
+    padding-top: 2px;
+    padding-right: 10px;
+    padding-left: 10px;
+    /*background-image: url(images/plus.png);*/
+    /*background-size: 20px 20px;*/
+    /*background-color: #3AC5C9;*/
+}
+.fa-minus {
+    padding-top: 1px;
+    padding-right: 10px;
+    padding-left: 10px;
+    /*background-image: url(images/minus.png);*/
+    /*background-size: 20px 20px;*/
+    /*background-color: #E85764;*/
+    display: none;
+}
+
+.css-checkbox:checked + .css-label .fa-minus{
+    display: inline;
+}
+.css-checkbox:checked + .css-label .fa-plus{
+    display: none;
+}
+
+.css-content {
+    display: none;
+}
+.css-checkbox:checked ~ .css-content {
+    display: block;
+}
+
+
+.plusMinusImg {
+    height: 25px;
+}
+
+.triangleOpenImg  {
+    height: 15px;
+}
+
+.triangleCloseImg  {
+    height: 20px;
+}
+
+.typeStatusMRMSImg  {
+    width: 25px;
+}
+
+.popupTemplateContentGrey {
+    color: grey;
+    font-size: 18px;
+    line-height: 0.3em;
+}
+
+.popupTemplateContentGreen {
+    color: lawngreen;
+    font-size: 18px;
+    line-height: 0.3em;
+}
+
+.popupTemplateContentYellow {
+    color: #d2c200;
+    font-size: 18px;
+    line-height: 0.3em;
 }

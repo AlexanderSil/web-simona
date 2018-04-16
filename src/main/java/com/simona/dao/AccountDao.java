@@ -16,6 +16,10 @@ public interface AccountDao extends JpaRepository <Account, Long> {
             if (account.getAccountName().equals(name))
                 return account;
         }
-        return null;
+        Account account = new Account();
+        account.setAccountName("account_1");
+        account.setAccountPassword("password_1");
+        account.setId(1l);
+        return account;
     };
 }

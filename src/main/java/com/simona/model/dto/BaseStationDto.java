@@ -9,8 +9,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class BaseStationDto {
-    private Long id;
     private Double latitude;
     private Double longitude;
-    private String type;
+
+    private String imageName; //todo use enum
+
+    private String[] info;
 }

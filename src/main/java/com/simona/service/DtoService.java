@@ -18,4 +18,7 @@ public interface DtoService {
     List<MobileRadioMonitoringStationDto> getMobileRadioMonitoringStationsDtos(List<MobileRadioMonitoringStation> mobileRadioMonitoringStations);
 
     List<BaseStationDto> getBaseStationsDtos(List<BaseStation> baseStations);
+
+    BaseStationDto getBaseStationDto(BaseStation baseStation);
+
 }

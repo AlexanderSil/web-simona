@@ -15,13 +15,25 @@ import javax.persistence.Table;
 @Table(name = "base_station")
 @Getter @Setter
 public class BaseStation {
+
+    public BaseStation() {}
+
+    public BaseStation(Long id, Double latitude, Double longitude, String iconName) {
+        this.id = id;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.iconName = iconName;
+    }
+
     @Id
     @GeneratedValue
     private Long id;
 
+    private Long mobileRadioMonitoringStationId;
+
     private Double latitude;
     private Double longitude;
 
-    private String type;
+    private String iconName;
 
 }

@@ -13,13 +13,22 @@ import java.util.List;
 /**
  * Created by alex on 3/19/18.
  */
-@Entity@Table(name = "region")
+@Entity
 @Getter @Setter
 public class Region {
     private @Id Long id;
 
+    private String regionName;
+
+    /**
+     * Right top
+     */
     private Double latitudeX;
     private Double longitudeX;
+
+    /**
+     * Left bottom
+     */
     private Double latitudeY;
     private Double longitudeY;
 

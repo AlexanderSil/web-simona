@@ -7,6 +7,27 @@ simonaService.service('MonitoringService', [ '$http', function($http) {
             method : 'GET',
             url : "api/regions"
         });
+    };
+    // this.getBaseStation = function getRegions() {
+    //     return $http({
+    //         method : 'GET',
+    //         url : "api/base"
+    //     });
+    // };
+    this.getBaseStation = function getRegions(rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, zoom, regionIds, mrmsIds) {
+        return $http({
+            method : 'GET',
+            url : "api/base",
+            params: {
+                rightTopLatitude: rightTopLatitude,
+                rightTopLongtitude: rightTopLongtitude,
+                leftBottomLatitude: leftBottomLatitude,
+                leftBottomLongtitude: leftBottomLongtitude,
+                zoom: zoom,
+                regionIds: regionIds,
+                mrmsIds: mrmsIds
+            }
+        });
     }
 } ]);
 

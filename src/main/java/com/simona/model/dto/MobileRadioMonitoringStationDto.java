@@ -15,10 +15,22 @@ import java.util.List;
 public class MobileRadioMonitoringStationDto {
     private Long id;
 
-    private Double latitude;
-    private Double longitude;
+    private String name;
 
-    private String type;
+    /**
+     * Right top
+     */
+    private Double latitudeX;
+    private Double longitudeX;
 
-    private List<BaseStationDto> baseStations;
+    /**
+     * Left bottom
+     */
+    private Double latitudeY;
+    private Double longitudeY;
+
+    private List<DetectedStationDto> detected;
+
+    private String status; //todo use enum
+    private String iconName; //todo use enum
 }

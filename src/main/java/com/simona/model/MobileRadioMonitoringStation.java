@@ -18,10 +18,25 @@ public class MobileRadioMonitoringStation {
     @GeneratedValue
     private Long id;
 
-    private Double latitude;
-    private Double longitude;
+    private Long regionId;
 
-    private String type;
+    private String nameStation;
+
+    /**
+     * Right top
+     */
+    private Double latitudeX;
+    private Double longitudeX;
+
+    /**
+     * Left bottom
+     */
+    private Double latitudeY;
+    private Double longitudeY;
+
+    private String status;
+
+    private String iconName;
 
     @Transient
     private List<BaseStation> baseStations;

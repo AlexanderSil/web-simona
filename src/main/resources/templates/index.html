@@ -17,26 +17,47 @@
         <div style="width: 100%;" class="grid">
             <div class="row h-100">
                 <div class="col-sm-3">
-                    <div ng-include='"partials/header.html"'></div>
+                    <!--<div ng-include='"partials/header.html"'></div>-->
 
-                    Regions:
-                    <div ng-repeat="item in regions">
-                        {{item.id}}'{{item.latitudeX}}'{{item.latitudeY}}'{{item.longitudeX}}'{{item.longitudeY}}
-                    </div>
 
-                    MRMS:
-                    <div ng-repeat="item in mrms">
-                        {{item.id}}'{{item.latitude}}'{{item.longitude}}'{{item.type}}
-                    </div>
+                    <!--https://codepen.io/anon/pen/xWyRMe
+                    https://codepen.io/tpai/pen/XXQdaw-->
+                    <div ng-repeat="region in regions">
 
-                    Base Stations:
-                    <div ng-repeat="item in baseStations">
-                        {{item.id}}'{{item.latitude}}'{{item.longitude}}'{{item.type}}
+                        <div class="plus-minus">
+                            <input type="checkbox" name="a" id="{{region.id}}" class="css-checkbox" checklist-model="model.regions" checklist-value="region.id">
+                            <label for="{{region.id}}" class="css-label" ng-click="selectObject({region}, true, false)">
+                                <span class="fa fa-plus"><img class="plusMinusImg" src="images/plus.png"></span>
+                                <span class="fa fa-minus"><img class="plusMinusImg" src="images/minus.png"></span>
+                                {{region.name}}
+                            </label>
+
+                            <div class="css-content">
+                                <div ng-repeat="mrms in region.mobileRadioMonitoringStations">
+
+                                    <div class="plus-minus mrms">
+                                        <input type="checkbox" name="a" id="{{mrms.name}}" class="css-checkbox">
+                                        <label for="{{mrms.name}}" class="css-label" ng-click="selectObject({mrms}, false, true)">
+                                            <span class="fa fa-plus"><img class="triangleCloseImg" src="images/triangle_close.png"></span>
+                                            <span class="fa fa-minus"><img class="triangleOpenImg" src="images/triangle_open.png"></span>
+                                            <img class="typeStatusMRMSImg" src="images/mrms/{{mrms.iconName}}"> {{mrms.name}}
+                                        </label>
+                                        <div class="css-content detected">
+                                            <div ng-repeat="detected in mrms.detected">
+                                                {{detected.name}}|||{{detected.count}}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
 
                     <div ng-view class="angular-view"></div>
 
-                    <div ng-include='"partials/footer.html"'></div>
+                    <!--<div ng-include='"partials/footer.html"'></div>-->
                 </div>
                 <div class="col-sm-9 map">
                     <div id="mapDiv"></div>

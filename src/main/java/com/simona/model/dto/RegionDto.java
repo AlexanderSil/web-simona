@@ -14,9 +14,19 @@ import java.util.List;
 @Setter
 public class RegionDto {
     private Long id;
+    private String name;
+
+    /**
+     * Right top
+     */
     private Double latitudeX;
     private Double longitudeX;
+
+    /**
+     * Left bottom
+     */
     private Double latitudeY;
     private Double longitudeY;
+
     private List<MobileRadioMonitoringStationDto> mobileRadioMonitoringStations;
 }
