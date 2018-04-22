@@ -66,14 +66,14 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
          * Create Graphic object on the map.
          ***********************************/
         function createGraphicObject(url, latitude, longitude, info) {
-            var contentInfo = "";
-            if (info == null) {
-
-            } else {
-                contentInfo = "<p class='popupTemplateContentGrey'><b>{MARRIEDRATE} "+ info[0] +" </b></p>" +
-                "<p class='popupTemplateContentGreen'><b>{MARRIEDRATE} "+ info[1] +" </b></p>" +
-                "<p class='popupTemplateContentYellow'><b>{MARRIEDRATE} "+ info[2] +" </b></p>"
-            }
+            // var contentInfo = "";
+            // if (info == null) {
+            //
+            // } else {
+            //     contentInfo = "<p class='popupTemplateContentGrey'><b>{MARRIEDRATE} "+ info[0] +" </b></p>" +
+            //     "<p class='popupTemplateContentGreen'><b>{MARRIEDRATE} "+ info[1] +" </b></p>" +
+            //     "<p class='popupTemplateContentYellow'><b>{MARRIEDRATE} "+ info[2] +" </b></p>"
+            // }
 
             return new Graphic({
                 attribute: "text",
@@ -88,7 +88,7 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                 }),
                 popupTemplate: { // autocasts as new PopupTemplate()
                     // title: "Title",
-                    content: contentInfo
+                    content: info
                 }
                 // popupTemplate: {
                 //     title: " Title "
@@ -196,6 +196,7 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
      * Generate List Selected Object
      ************************************/
     $scope.selectObject = function selectObject(item, isRegion, isMRMS) {
+
         if (isRegion) {
             $scope.selectedObject.regionIds = [];
             for (var i = 0; i < $scope.regions.length; i++) {
@@ -203,14 +204,14 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                     if ((document.getElementById($scope.regions[i].id).checked) == false) {
                         $scope.selectedObject.regionIds.push($scope.regions[i].id);
                     } else {
-                        for (var m = 0; m < $scope.regions[i].mobileRadioMonitoringStations.length; m++) {
+                        for (var m = 0; m < $scope.regions[i].postDTOs.length; m++) {
 
-                            var index = $scope.selectedObject.mrmsIds.indexOf($scope.regions[i].mobileRadioMonitoringStations[m].name);
+                            var index = $scope.selectedObject.mrmsIds.indexOf($scope.regions[i].postDTOs[m].name);
                             if (index > -1) {
                                 $scope.selectedObject.mrmsIds.splice(index, 1);
                             }
 
-                            document.getElementById($scope.regions[i].mobileRadioMonitoringStations[m].name).checked = false;
+                            document.getElementById($scope.regions[i].postDTOs[m].name).checked = false;
                         }
                     }
                 } else if ((document.getElementById($scope.regions[i].id).checked)) {
@@ -219,28 +220,30 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
             }
             console.log("Selected Regions ID's - " + $scope.selectedObject.regionIds + " || Selected MRMS name - " + $scope.selectedObject.mrmsIds);
         }
+
         if (isMRMS) {
             $scope.selectedObject.mrmsIds = [];
             for (var i = 0; i < $scope.regions.length; i++) {
                 for (var j = 0; j < $scope.selectedObject.regionIds.length; j++) {
                     if ($scope.regions[i].id == $scope.selectedObject.regionIds[j]) {
-                        for (var m = 0; m < $scope.regions[i].mobileRadioMonitoringStations.length; m++) {
-                            if ($scope.regions[i].mobileRadioMonitoringStations[m].name == item.mrms.name) {
-                                if ((document.getElementById($scope.regions[i].mobileRadioMonitoringStations[m].name).checked) == false) {
-                                    $scope.selectedObject.mrmsIds.push($scope.regions[i].mobileRadioMonitoringStations[m].name);
+                        for (var m = 0; m < $scope.regions[i].postDTOs.length; m++) {
+                            if ($scope.regions[i].postDTOs[m].id == item.mrms.id) {
+                                if ((document.getElementById($scope.regions[i].postDTOs[m].id).checked) == false) {
+                                    $scope.selectedObject.mrmsIds.push($scope.regions[i].postDTOs[m].id);
                                 }
                             } else {
-                                if ((document.getElementById($scope.regions[i].mobileRadioMonitoringStations[m].name).checked)) {
-                                    $scope.selectedObject.mrmsIds.push($scope.regions[i].mobileRadioMonitoringStations[m].name);
+                                if ((document.getElementById($scope.regions[i].postDTOs[m].id).checked)) {
+                                    $scope.selectedObject.mrmsIds.push($scope.regions[i].postDTOs[m].id);
                                 }
                             }
                         }
                     }
                 }
             }
-            console.log("Selected Regions ID's - " + $scope.selectedObject.regionIds + " || Selected MRMS name - " + $scope.selectedObject.mrmsIds);
+            console.log("Selected Regions ID's - " + $scope.selectedObject.regionIds + " || Selected MRMS id - " + $scope.selectedObject.mrmsIds);
+            $scope.sendRequest();
         }
-        $scope.sendRequest();
+
     };
 
     /***********************************
@@ -270,7 +273,7 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
         MonitoringService.getRegions()
             .then(function success(response) {
                     $scope.regions = response.data;
-                    $scope.mobileRadioMonitoringStations = response.data[0].mobileRadioMonitoringStations;
+                    $scope.mobileRadioMonitoringStations = response.data[0].postDTOs;
                 },
                 function error (response) {
                     $scope.message = '';
@@ -283,90 +286,4 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                 });
     }
 
-
-
 }]);
-
-// simonaApp.controller('MonitoringController', function ($scope, $filter, esriLoader) {
-//
-    // esriLoader.require(["esri/Map", "esri/views/MapView", "dojo/domReady!"], function(Map, MapView){
-    //
-    //     var map = new Map({
-    //         basemap: "streets"
-    //     });
-    //
-    //     var view = new MapView({
-    //         container: "mapDiv",
-    //         map: map,
-    //         zoom: 14,
-    //         center: [36.2304, 49.9935]
-    //     });
-    // });
-//
-// });
-//
-// simonaApp.controller('AdminController', function($scope, $filter) {
-//     $scope.clickfunction = function(){
-//         var time = $filter('date')(new Date(),'yyyy-MM-dd HH:mm:ss Z');
-//         $scope.welcome = "Time = " + time;
-//     }
-// });
-//
-// simonaApp.controller('ManagementController', function ($scope, $filter) {
-//     $scope.clickfunction = function(){
-//         var time = $filter('date')(new Date(),'yyyy-MM-dd HH:mm:ss Z');
-//         $scope.welcome = "Time = " + time;
-//     }
-// });
-//
-// simonaApp.controller('LoginController',
-//     function ($scope, UserService, $rootScope, $location, $cookieStore, USER_ROLES) {
-/*
-    $scope.rmReadonly = function() {
-        $("#username").attr("readonly", false);
-    };
-
-    $scope.login = function () {
-        if ($rootScope.user === undefined) {
-            // checks the inputs to add the data to the model in case of autofill
-            $('#loginForm').checkAndTriggerAutoFillEvent();
-
-            UserService.authenticate("username=" + $('#loginForm').get('0')[0].value + "&password=" + $('#loginForm').get('0')[1].value,
-                function (tokenObject) {
-                    var authToken = tokenObject.token;
-                    $rootScope.authToken = authToken;
-                    $rootScope.logoutFlag = true;
-                    $cookieStore.put('authToken', authToken);
-                    var user = tokenObject.authUser;
-                    $rootScope.user = user;
-                    if ($rootScope.hasRole(USER_ROLES.SUPER_ADMIN)) {
-                        $location.path("/management");
-                        $rootScope.logoutFlag = false;
-                    }
-                    else if ($rootScope.hasRole(USER_ROLES.USER)) {
-                        $location.path("/");
-                        $rootScope.logoutFlag = false;
-                    }
-                    else {
-                        $location.path("/");
-                        $rootScope.logoutFlag = false;
-                    }
-                    $rootScope.$broadcast('$login');
-                },
-                function (error) {
-                    var key = error.data.exceptionClassName;
-                    var errorString = $rootScope.dictionary[key];
-                    if (error.status == 401) {
-                        $rootScope.errorL =  $rootScope.dictionary['org.springframework.security.authentication.BadCredentialsException'];
-                    } if (error.status == 409) {
-                        $rootScope.errorL =  $rootScope.dictionary['com.siliconnile.eshtapay.operators.exception.LoginsExceededException'];
-                    }
-                }
-            );
-
-        } else {
-            $location.path("/");
-        }
-    };
- */
-// });

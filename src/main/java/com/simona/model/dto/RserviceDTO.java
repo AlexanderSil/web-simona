@@ -2,12 +2,17 @@ package com.simona.model.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.stereotype.Component;
 
 /**
- * Created by alex on 4/3/18.
+ * It is for show in menu
  */
-@Getter @Setter
-public class DetectedStationDto {
+@Component
+@Getter
+@Setter
+public class RserviceDTO {
+
     private String name;
     private Integer count;
+
 }

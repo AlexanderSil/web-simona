@@ -214,17 +214,17 @@ body {
 .popupTemplateContentGrey {
     color: grey;
     font-size: 18px;
-    line-height: 0.3em;
+    line-height: 0.0em; !important;
 }
 
 .popupTemplateContentGreen {
     color: lawngreen;
     font-size: 18px;
-    line-height: 0.3em;
+    line-height: 0.0em; !important;
 }
 
 .popupTemplateContentYellow {
     color: #d2c200;
     font-size: 18px;
-    line-height: 0.3em;
+    line-height: 0.0em; !important;
 }

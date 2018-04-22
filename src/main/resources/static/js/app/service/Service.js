@@ -17,7 +17,7 @@ simonaService.service('MonitoringService', [ '$http', function($http) {
     this.getBaseStation = function getRegions(rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, zoom, regionIds, mrmsIds) {
         return $http({
             method : 'GET',
-            url : "api/base",
+            url : "api/points",
             params: {
                 rightTopLatitude: rightTopLatitude,
                 rightTopLongtitude: rightTopLongtitude,

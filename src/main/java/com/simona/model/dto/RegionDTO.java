@@ -6,15 +6,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-/**
- * Created by alex on 3/24/18.
- */
 @Component
 @Getter
 @Setter
-public class MobileRadioMonitoringStationDto {
+public class RegionDTO {
     private Long id;
-
     private String name;
 
     /**
@@ -29,8 +25,5 @@ public class MobileRadioMonitoringStationDto {
     private Double latitudeY;
     private Double longitudeY;
 
-    private List<DetectedStationDto> detected;
-
-    private String status; //todo use enum
-    private String iconName; //todo use enum
+    private List<PostDTO> postDTOs;
 }

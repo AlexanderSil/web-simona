@@ -33,17 +33,17 @@
                             </label>
 
                             <div class="css-content">
-                                <div ng-repeat="mrms in region.mobileRadioMonitoringStations">
+                                <div ng-repeat="mrms in region.postDTOs">
 
                                     <div class="plus-minus mrms">
-                                        <input type="checkbox" name="a" id="{{mrms.name}}" class="css-checkbox">
-                                        <label for="{{mrms.name}}" class="css-label" ng-click="selectObject({mrms}, false, true)">
+                                        <input type="checkbox" name="a" id="{{mrms.id}}" class="css-checkbox"><!--todo maybe need change id on id="post+{{mrms.id}}", if have conflict with region id-->
+                                        <label for="{{mrms.id}}" class="css-label" ng-click="selectObject({mrms}, false, true)">
                                             <span class="fa fa-plus"><img class="triangleCloseImg" src="images/triangle_close.png"></span>
                                             <span class="fa fa-minus"><img class="triangleOpenImg" src="images/triangle_open.png"></span>
                                             <img class="typeStatusMRMSImg" src="images/mrms/{{mrms.iconName}}"> {{mrms.name}}
                                         </label>
                                         <div class="css-content detected">
-                                            <div ng-repeat="detected in mrms.detected">
+                                            <div ng-repeat="detected in mrms.rserviceDTOs">
                                                 {{detected.name}}|||{{detected.count}}
                                             </div>
                                         </div>

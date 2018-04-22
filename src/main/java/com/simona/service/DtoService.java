@@ -1,11 +1,7 @@
 package com.simona.service;
 
-import com.simona.model.BaseStation;
-import com.simona.model.MobileRadioMonitoringStation;
-import com.simona.model.Region;
-import com.simona.model.dto.BaseStationDto;
-import com.simona.model.dto.MobileRadioMonitoringStationDto;
-import com.simona.model.dto.RegionDto;
+import com.simona.model.*;
+import com.simona.model.dto.*;
 
 import java.util.List;
 
@@ -13,12 +9,15 @@ import java.util.List;
  * Created by alex on 3/24/18.
  */
 public interface DtoService {
-    List<RegionDto> getRegionDtos(List<Region> regionList);
 
-    List<MobileRadioMonitoringStationDto> getMobileRadioMonitoringStationsDtos(List<MobileRadioMonitoringStation> mobileRadioMonitoringStations);
+    List<RserviceDTO> getRserviceDTOs(Iterable<Rservice> rservices);
 
-    List<BaseStationDto> getBaseStationsDtos(List<BaseStation> baseStations);
+    PostDTO getPostDTO(Post post);
 
-    BaseStationDto getBaseStationDto(BaseStation baseStation);
+    List<RegionDTO> getRegionDTOs(List<Region> regionList);
+
+    PointDTO getPointDto(ControlPoint controlPoint);
+
+    PointDTO getPointsFromPosts(PostTraces postTraces);
 
 }
