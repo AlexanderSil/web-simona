@@ -19,7 +19,7 @@ public class Station {
 
     private Integer sys_id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name="rsrvc_id", nullable=false)
     private Rservice rservice;
 

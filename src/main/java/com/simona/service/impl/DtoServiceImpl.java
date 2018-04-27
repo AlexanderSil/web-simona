@@ -96,10 +96,40 @@ public class DtoServiceImpl implements DtoService {
             pointDTO.setLongitude(postTraces.getLongitude());
             pointDTO.setLatitude(postTraces.getLatitude());
 
-            pointDTO.setImageName("pointer/1.png");//todo add postTraces.getDirection() and add logic for select direction;
+            if (postTraces.getDirection() != null) {
+                if (337.5d <= postTraces.getDirection() && postTraces.getDirection() < 22.5d){
+                    pointDTO.setImageName("pointer/0.png");
+                }
+                if (22.5d <= postTraces.getDirection() && postTraces.getDirection() < 67.5d){
+                    pointDTO.setImageName("pointer/45.png");
+                }
+                if (67.5d <= postTraces.getDirection() && postTraces.getDirection() < 112.5d){
+                    pointDTO.setImageName("pointer/90.png");
+                }
+                if (112.5d <= postTraces.getDirection() && postTraces.getDirection() < 157.5d){
+                    pointDTO.setImageName("pointer/135.png");
+                }
+                if (157.5d <= postTraces.getDirection() && postTraces.getDirection() < 202.5d){
+                    pointDTO.setImageName("pointer/180.png");
+                }
+                if (202.5d <= postTraces.getDirection() && postTraces.getDirection() < 247.5d){
+                    pointDTO.setImageName("pointer/225.png");
+                }
+                if (247.5d <= postTraces.getDirection() && postTraces.getDirection() < 292.5d){
+                    pointDTO.setImageName("pointer/270.png");
+                }
+                if (292.5d <= postTraces.getDirection() && postTraces.getDirection() < 337.5d){
+                    pointDTO.setImageName("pointer/315.png");
+                }
+            } else {
+                pointDTO.setImageName("pointer/0.png");
+            }
+            pointDTO.setInfo("Пост ID: " + postTraces.getPost().getId());
 
-            if (postTraces.getSpeed() != null)
-                pointDTO.setInfo(postTraces.getSpeed().toString() + "km/h");
+            if (postTraces.getSpeed() != null) {
+                pointDTO.setInfo(pointDTO.getInfo() + ". Скорость: " + postTraces.getSpeed().toString() + "km/h");
+            }
+
             return pointDTO;
         }
         return null;

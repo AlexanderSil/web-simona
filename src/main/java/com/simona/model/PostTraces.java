@@ -14,7 +14,7 @@ public class PostTraces {
     @Id
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="pst_id", nullable=false)
     private Post post;
 
@@ -24,5 +24,5 @@ public class PostTraces {
     private Double longitude;
 
     private Integer speed;
-    private Integer direction;
+    private Double direction;
 }
