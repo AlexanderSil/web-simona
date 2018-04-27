@@ -1,4 +1,4 @@
-var simonaApp = angular.module('simonaApp', ['ngRoute', 'esri.map', 'simonaApp.services'])
+var simonaApp = angular.module('simonaApp', ['ngRoute', 'esri.map', 'simonaApp.services', 'ngStomp'])
     .config(['$routeProvider', function ($routeProvider) {
 
 

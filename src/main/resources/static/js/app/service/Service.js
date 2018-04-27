@@ -5,7 +5,7 @@ simonaService.service('MonitoringService', [ '$http', function($http) {
     this.getRegions = function getRegions() {
         return $http({
             method : 'GET',
-            url : "api/regions"
+            url : "regions"
         });
     };
     // this.getBaseStation = function getRegions() {
@@ -17,7 +17,7 @@ simonaService.service('MonitoringService', [ '$http', function($http) {
     this.getBaseStation = function getRegions(rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, zoom, regionIds, mrmsIds) {
         return $http({
             method : 'GET',
-            url : "api/points",
+            url : "points",
             params: {
                 rightTopLatitude: rightTopLatitude,
                 rightTopLongtitude: rightTopLongtitude,
@@ -26,6 +26,55 @@ simonaService.service('MonitoringService', [ '$http', function($http) {
                 zoom: zoom,
                 regionIds: regionIds,
                 mrmsIds: mrmsIds
+            }
+        });
+    };
+    this.updatePostStatus = function update(updatedObject) {
+        return $http({
+            method : 'GET',
+            url : "updatePostStatus",
+            params: {
+                status: updatedObject.status,
+                postID: updatedObject.postID,
+                type: updatedObject.type,
+                packetID: updatedObject.packetID
+            }
+        });
+    };
+    this.updatePostLocation = function updatePostLocation(rightTopLatitude, rightTopLongitude, leftBottomLatitude, leftBottomLongitude, zoom, updateObject) {
+        return $http({
+            method : 'GET',
+            url : "updatePostLocation",
+            params: {
+                rightTopLatitude: rightTopLatitude,
+                rightTopLongitude: rightTopLongitude,
+                leftBottomLatitude: leftBottomLatitude,
+                leftBottomLongitude: leftBottomLongitude,
+                zoom: zoom,
+                coordLat: updateObject.coord.lat,
+                coordLon: updateObject.coord.lon,
+                speed: updateObject.speed,
+                direction: updateObject.direction,
+                postID: updateObject.postID,
+                type: updateObject.type,
+                packetID: updateObject.packetID
+            }
+        });
+    };
+    this.updatePostControlPointStatus = function updatePostControlPointStatus(rightTopLatitude, rightTopLongitude, leftBottomLatitude, leftBottomLongitude, zoom, updateObject) {
+        return $http({
+            method : 'GET',
+            url : "updatePostControlPointStatus",
+            params: {
+                rightTopLatitude: rightTopLatitude,
+                rightTopLongitude: rightTopLongitude,
+                leftBottomLatitude: leftBottomLatitude,
+                leftBottomLongitude: leftBottomLongitude,
+                zoom: zoom,
+                points: updateObject.points,
+                postID: updateObject.postID,
+                type: updateObject.type,
+                packetID: updateObject.packetID
             }
         });
     }
