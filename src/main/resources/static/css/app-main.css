@@ -228,3 +228,7 @@ body {
     font-size: 18px;
     line-height: 0.0em; !important;
 }
+
+.liveScore{
+    color : blue;
+}
