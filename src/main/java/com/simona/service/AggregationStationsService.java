@@ -10,5 +10,7 @@ import java.util.List;
  */
 public interface AggregationStationsService {
 
-    List<PointDTO> aggregateStations (Iterable<Station> stations, Integer zoom);
+    List<PointDTO> aggregateStations (Double rightTopLatitude, Double rightTopLongitude,
+                                      Double leftBottomLatitude, Double leftBottomLongitude,
+                                      Iterable<Station> stations, Integer zoom);
 }

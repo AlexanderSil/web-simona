@@ -29,7 +29,13 @@ public class MonitoringServiceImpl implements MonitoringService {
     private AggregationControlPointsService aggregationControlPointsService;
 
     @Autowired
+    private AggregationStationsServiceImpl aggregationStationsService;
+
+    @Autowired
     private ControlPointDao controlPointDao;
+
+    @Autowired
+    private StationDao stationDao;
 
     @Autowired
     private RserviceDao rserviceDao;
@@ -40,8 +46,11 @@ public class MonitoringServiceImpl implements MonitoringService {
     @Autowired
     private PostTracesDao postTracesDao;
 
-    private Date lastGettingControlPointFromDB;
-    private Iterable<ControlPoint> controlPoints;
+//    private Date lastGettingControlPointFromDB;
+//    private Iterable<ControlPoint> controlPoints;
+
+    private Date lastGettingStationsFromDB;
+    private Iterable<Station> stations;
 
     private Date lastGettingPostTracesFromDB;
     private PostTraces lastPostTraces;
@@ -86,78 +95,80 @@ public class MonitoringServiceImpl implements MonitoringService {
     }
 
 
-    public List<PointDTO> getAggregatedPointDTO(Double rightTopLatitude, Double rightTopLongitude,
-                                                Double leftBottomLatitude, Double leftBottomLongitude,
-                                                Integer zoom) {
+    public List<PointDTO> getAggregatedControlPointDTO(Double rightTopLatitude, Double rightTopLongitude,
+                                                       Double leftBottomLatitude, Double leftBottomLongitude,
+                                                       Integer zoom) {
         List<PointDTO> controlPointDTOs = new LinkedList<>();
 
-        if (lastGettingControlPointFromDB == null
-                || (Math.abs(lastGettingControlPointFromDB.getTime() - new Date().getTime())/60)/1000 > 60) { //update data from db 1 hour
-            lastGettingControlPointFromDB = new Date();
-            controlPoints = controlPointDao.findAll(); //TODO good solution select by coordinate
-        }
+//        if (lastGettingControlPointFromDB == null
+//                || (Math.abs(lastGettingControlPointFromDB.getTime() - new Date().getTime())/60)/1000 > 10) { //update data from db 10 min
+//            lastGettingControlPointFromDB = new Date();
 
-        if (lastGettingPostTracesFromDB == null
-                || (Math.abs(lastGettingPostTracesFromDB.getTime() - new Date().getTime())/60)/1000 > 60) { //update data from db 1 hour
-            lastGettingPostTracesFromDB = new Date();
-            lastPostTraces = postTracesDao.findLastPostTraces();
-        }
+//            Iterable<Integer> controlPointsIds = new ArrayList<>();
+//            List<Integer> controlPointsIds = new ArrayList<>();
+//            controlPointsIds.add(5931);
+//            controlPoints = controlPointDao.findAllById(controlPointsIds);
+//            controlPoints = controlPointDao.findAll(); //TODO good solution select by coordinate
+//        }
 
-        controlPointDTOs.add(dtoService.getPointsFromPosts(lastPostTraces));
 
         //Add control points
-        controlPointDTOs.addAll(aggregationControlPointsService.aggregateControlPoints(rightTopLatitude, rightTopLongitude,
-                leftBottomLatitude, leftBottomLongitude, controlPoints, zoom));
+//        controlPointDTOs.addAll(aggregationControlPointsService.aggregateControlPoints(rightTopLatitude, rightTopLongitude,
+//                leftBottomLatitude, leftBottomLongitude, controlPoints, zoom));
+
+
+        if (lastGettingStationsFromDB == null
+                || (Math.abs(lastGettingStationsFromDB.getTime() - new Date().getTime())/60)/1000 > 10) { //update data from db every 10 min
+            lastGettingStationsFromDB = new Date();
+
+            stations = stationDao.findAll();
+        }
+
+        controlPointDTOs.addAll(aggregationStationsService.aggregateStations(rightTopLatitude, rightTopLongitude,
+                leftBottomLatitude, leftBottomLongitude, stations, zoom));
 
         return controlPointDTOs;
     }
 
-//    public MonitoringObjects getMonitoringObjects() {
-//        if (zoom == null) {
-//            zoom = 11;
-//        }
-//        MonitoringObjects monitoringObjects = new MonitoringObjects();
-//        if (rservices == null && posts == null && controlPoints == null && lastPostTraces == null) {
-//            monitoringObjects.setName("MonitoringObjects == null");
-//        } else {
-//            monitoringObjects.setName("MonitoringObjects != null");
-//        }
-//
-//        if (rservices != null && posts != null)
-//            monitoringObjects.setRegionDTOs(getRegionsDTO());
-//        //set control points
-//        if (controlPoints != null)
-//            monitoringObjects.setPointDTOs(aggregationControlPointsService.aggregateControlPoints(rightTopLatitude, rightTopLongitude,
-//                    leftBottomLatitude, leftBottomLongitude, controlPoints, zoom));
-//
-//        //set post
-//        if (lastPostTraces != null)
-//            monitoringObjects.getPointDTOs().add(dtoService.getPointsFromPosts(lastPostTraces));
+    @Override
+    public List<PointDTO> getPostsDTO(Double rightTopLatitude, Double rightTopLongitude,
+                                      Double leftBottomLatitude, Double leftBottomLongitude,
+                                      Integer zoom) {
+        List<PointDTO> postDTOs = new LinkedList<>();
+        if (lastGettingPostTracesFromDB == null
+                || (Math.abs(lastGettingPostTracesFromDB.getTime() - new Date().getTime())/60)/1000 > 10) { //update data from db 10 min
+            lastGettingPostTracesFromDB = new Date();
+            lastPostTraces = postTracesDao.findLastPostTraces();
+        }
 
-//        return monitoringObjects;
-//    }
+        postDTOs.add(dtoService.getPointsDTOFromPosts(lastPostTraces));
+
+        return postDTOs;
+    }
 
     @Override
     public void updateControlPoint(UpdatePointDTO point, Integer postID, String type, Integer packetID) {
-        for (ControlPoint controlPoint : controlPoints) {
-            if (controlPoint.getId() == point.getPointID()) {
-                if ("NOTHING".equals(point.getStatus())) {
-                    controlPoint.setStatus(0);
-                }
-                if ("DETECT".equals(point.getStatus())) {
-                    controlPoint.setStatus(1);
-                }
-                if ("MEASUREMENT".equals(point.getStatus())){
-                    controlPoint.setStatus(2);
-                }
-                if ("NOTHING".equals(controlPoint.getStation().getStatus())) {
-                    controlPoint.getStation().setStatus(0);
-                }
-                if ("DETECT".equals(controlPoint.getStation().getStatus())) {
-                    controlPoint.getStation().setStatus(1);
-                }
-                if ("MEASUREMENT".equals(controlPoint.getStation().getStatus())){
-                    controlPoint.getStation().setStatus(2);
+        for (Station station : stations) {
+            for (ControlPoint controlPoint : station.getControlPoints()) {
+                if (controlPoint.getId().equals(point.getPointID())) {
+                    if ("NOTHING".equals(point.getStatus())) {
+                        controlPoint.setStatus(0);
+                    }
+                    if ("DETECT".equals(point.getStatus())) {
+                        controlPoint.setStatus(1);
+                    }
+                    if ("MEASUREMENT".equals(point.getStatus())){
+                        controlPoint.setStatus(2);
+                    }
+                    if ("NOTHING".equals(controlPoint.getStation().getStatus())) {
+                        controlPoint.getStation().setStatus(0);
+                    }
+                    if ("DETECT".equals(controlPoint.getStation().getStatus())) {
+                        controlPoint.getStation().setStatus(1);
+                    }
+                    if ("MEASUREMENT".equals(controlPoint.getStation().getStatus())){
+                        controlPoint.getStation().setStatus(2);
+                    }
                 }
             }
         }

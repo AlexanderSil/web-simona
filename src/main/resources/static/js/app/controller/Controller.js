@@ -67,15 +67,6 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
          * Create Graphic object on the map.
          ***********************************/
         function createGraphicObject(url, latitude, longitude, info) {
-            // var contentInfo = "";
-            // if (info == null) {
-            //
-            // } else {
-            //     contentInfo = "<p class='popupTemplateContentGrey'><b>{MARRIEDRATE} "+ info[0] +" </b></p>" +
-            //     "<p class='popupTemplateContentGreen'><b>{MARRIEDRATE} "+ info[1] +" </b></p>" +
-            //     "<p class='popupTemplateContentYellow'><b>{MARRIEDRATE} "+ info[2] +" </b></p>"
-            // }
-
             return new Graphic({
                 attribute: "text",
                 geometry: new Point({
@@ -106,8 +97,10 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                 // }
             });
         }
-        var graphicsLayer = new GraphicsLayer();/*** Add graphic layer*/
+        var graphicsLayer = new GraphicsLayer();/*** Add graphic layer for Control Points*/
         map.add(graphicsLayer);
+        var graphicsLayerPosts = new GraphicsLayer();/*** Add graphic layer for Posts*/
+        map.add(graphicsLayerPosts);
 
         /***********************************
          *  Event on change zoom.
@@ -134,17 +127,9 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                         $scope.view.zoom = 21;
                     }
                 } else {
-                    // console.log("Right top. Latitude - " + rightTopLatitude + " ; Longtitude - " + rightTopLongtitude);
-                    // console.log("Left Bottom. Latitude - " + leftBottomLatitude + " ; Longtitude - " + leftBottomLongtitude);
-                    // console.log("View extent (when change represent part): xmax- " + view.extent.xmax + "; xmin- " + view.extent.xmin + "; ymax- " + view.extent.ymax + "; ymin- " + view.extent.ymin + "; ");
-                    // console.log("Right top. XY max coordinate - " + webMercatorUtils.xyToLngLat(view.extent.xmax, view.extent.ymax));
-                    // console.log("Left Bottom. XY min coordinate - " + webMercatorUtils.xyToLngLat(view.extent.xmin, view.extent.ymin));
-                    // rightTopLatitude = webMercatorUtils.xyToLngLat($scope.view.extent.xmax, $scope.view.extent.ymax)[1];
-                    // rightTopLongtitude = webMercatorUtils.xyToLngLat($scope.view.extent.xmax, $scope.view.extent.ymax)[0];
-                    // leftBottomLatitude = webMercatorUtils.xyToLngLat($scope.view.extent.xmin, $scope.view.extent.ymin)[1];
-                    // leftBottomLongtitude = webMercatorUtils.xyToLngLat($scope.view.extent.xmin, $scope.view.extent.ymin)[0];
-                    //
-                    // getBaseStations(rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, $scope.view.zoom);
+
+                    console.log("Zoom - " + view.zoom);
+
                     $scope.sendRequest();
 
                 }
@@ -162,7 +147,19 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
             }
         };
 
+        showPosts = function showPosts(posts) {
+            graphicsLayerPosts.removeAll();
+            // console.log("baseStations.length - " + baseStations.length);
+            for (var u = 0; u < posts.length; u++) {
+                graphicsLayerPosts.add(createGraphicObject("images/" + posts[u].imageName,
+                    posts[u].latitude,
+                    posts[u].longitude,
+                    posts[u].info));
+            }
+        };
+
         getRegionsWithMonitoringStations();
+        // getPosts();
 
         $scope.webMercatorUtils = webMercatorUtils;
 
@@ -181,8 +178,9 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
         rightTopLongtitude = $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmax, $scope.view.extent.ymax)[0];
         leftBottomLatitude = $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmin, $scope.view.extent.ymin)[1];
         leftBottomLongtitude = $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmin, $scope.view.extent.ymin)[0];
-        subscribePostServerSymonaWebSocket()
+        subscribePostServerSymonaWebSocket();
         getBaseStations(rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, $scope.view.zoom, $scope.selectedObject.regionIds, $scope.selectedObject.mrmsIds);
+        getPosts(rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, $scope.view.zoom, $scope.selectedObject.regionIds, $scope.selectedObject.mrmsIds);
     };
 
     /***********************************
@@ -242,8 +240,6 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                 }
             }
             $scope.sendRequest();
-            subscribePostServerSymonaWebSocket()
-
         }
         // console.log("Selected Regions ID's - " + $scope.selectedObject.regionIds + " || Selected MRMS name - " + $scope.selectedObject.mrmsIds);
     };
@@ -274,6 +270,26 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
         MonitoringService.getBaseStation(rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, zoom, regionIds, mrmsIds)
             .then(function success(response) {
                     showMonitoringObjects(response.data);
+                },
+                function error(response) {
+                    $scope.message = '';
+                    if (response.status === 404) {
+                        console.log("BaseStation not found!");
+                    }
+                    else {
+                        console.log("Error getting BaseStation!");
+                    }
+                });
+    }
+
+    /***********************************
+     * Function Get data (Posts) from server.
+     ************************************/
+    function getPosts (rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, zoom,
+                regionIds, mrmsIds) {
+        MonitoringService.getPostList(rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, zoom, regionIds, mrmsIds)
+            .then(function success(response) {
+                    showPosts(response.data);
                 },
                 function error(response) {
                     $scope.message = '';
@@ -354,7 +370,7 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                 MonitoringService.updatePostLocation(rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, $scope.view.zoom, updatedObject)
                     .then(function success(response) {
                             if (response.data.length > 0) {
-                                showMonitoringObjects(response.data);
+                                showPosts(response.data);
                             }
                         },
                         function error(response) {
@@ -409,7 +425,7 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
             };
 
             res.onerror = function(error) {
-                console.log("Error Websocket to Symona server. Message - " + error.message);
+                console.log("Error Websocket to Symona server. Target URL - \"" + error.target.url + "\". Message - " + error.message);
             };
 
             return res;
@@ -426,7 +442,7 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
             if (typeof data === "object") {
                 data = JSON.stringify(data);
             }
-            if (socket != null) {
+            if (socket != null && socket.readyState == 1) {
                 socket.send(data);
             }
         };

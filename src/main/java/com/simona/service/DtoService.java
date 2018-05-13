@@ -18,6 +18,6 @@ public interface DtoService {
 
     PointDTO getPointDto(ControlPoint controlPoint);
 
-    PointDTO getPointsFromPosts(PostTraces postTraces);
+    PointDTO getPointsDTOFromPosts(PostTraces postTraces);
 
 }

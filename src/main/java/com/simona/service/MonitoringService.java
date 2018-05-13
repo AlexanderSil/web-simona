@@ -11,13 +11,15 @@ public interface MonitoringService {
 
     List<RegionDTO> getRegionsDTO();
 
-    List<PointDTO> getAggregatedPointDTO(Double rightTopLatitude, Double rightTopLongitude,
+    List<PointDTO> getAggregatedControlPointDTO(Double rightTopLatitude, Double rightTopLongitude,
+                                                Double leftBottomLatitude, Double leftBottomLongitude,
+                                                Integer zoom);
+
+    List<PointDTO> getPostsDTO(Double rightTopLatitude, Double rightTopLongitude,
                                                 Double leftBottomLatitude, Double leftBottomLongitude,
                                                 Integer zoom);
 
     void updateControlPoint(UpdatePointDTO point, Integer postID, String type, Integer packetID);
 
     void updatePostLocation(Double coordLat, Double coordLon, Integer speed, Double direction, Integer postID, String type, Integer packetID);
-
-//    MonitoringObjects getMonitoringObjects();
 }

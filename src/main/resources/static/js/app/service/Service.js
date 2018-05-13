@@ -29,6 +29,21 @@ simonaService.service('MonitoringService', [ '$http', function($http) {
             }
         });
     };
+    this.getPostList = function getPostList(rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, zoom, regionIds, mrmsIds) {
+        return $http({
+            method : 'GET',
+            url : "posts",
+            params: {
+                rightTopLatitude: rightTopLatitude,
+                rightTopLongtitude: rightTopLongtitude,
+                leftBottomLatitude: leftBottomLatitude,
+                leftBottomLongtitude: leftBottomLongtitude,
+                zoom: zoom,
+                regionIds: regionIds,
+                mrmsIds: mrmsIds
+            }
+        });
+    };
     this.updatePostStatus = function update(updatedObject) {
         return $http({
             method : 'GET',
