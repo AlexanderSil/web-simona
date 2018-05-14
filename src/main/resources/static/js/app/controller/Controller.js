@@ -269,7 +269,17 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                 regionIds, mrmsIds) {
         MonitoringService.getBaseStation(rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, zoom, regionIds, mrmsIds)
             .then(function success(response) {
-                    showMonitoringObjects(response.data);
+                    if ($scope.view.zoom === zoom) {
+                        showMonitoringObjects(response.data);
+                    } else {
+                        //recursion for getting actual Control Points for zoom.
+                        getBaseStations($scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmax, $scope.view.extent.ymax)[1],
+                            $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmax, $scope.view.extent.ymax)[0],
+                            $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmin, $scope.view.extent.ymin)[1],
+                            $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmin, $scope.view.extent.ymin)[0],
+                            Math.trunc($scope.view.zoom));
+                        console.log("Recursion!");
+                    }
                 },
                 function error(response) {
                     $scope.message = '';
