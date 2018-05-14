@@ -16,7 +16,7 @@ import java.util.Set;
 public class Post {
 
     @Id
-    private Long id;
+    private Integer id;
 
     private Integer state;
 

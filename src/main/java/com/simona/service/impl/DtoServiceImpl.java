@@ -37,7 +37,12 @@ public class DtoServiceImpl implements DtoService {
         PostDTO postDTO = new PostDTO();
         postDTO.setId(post.getId());
         postDTO.setState(post.getState());
-        postDTO.setIconName("greenCar.png");//todo hardcode
+        if (post.getState() == null || post.getState() == 1) {
+            postDTO.setIconName("backCar.png");
+        }
+        if (post.getState() != null && post.getState() == 0) {
+            postDTO.setIconName("greenCar.png");
+        }
         postDTO.setName("РМ-1500-Р3/5М");//todo hardcode
         return postDTO;
     }

@@ -1,6 +1,5 @@
 package com.simona.service;
 
-import com.simona.model.MonitoringObjects;
 import com.simona.model.dto.PointDTO;
 import com.simona.model.dto.RegionDTO;
 import com.simona.model.dto.UpdatePointDTO;
@@ -22,4 +21,6 @@ public interface MonitoringService {
     void updateControlPoint(UpdatePointDTO point, Integer postID, String type, Integer packetID);
 
     void updatePostLocation(Double coordLat, Double coordLon, Integer speed, Double direction, Integer postID, String type, Integer packetID);
+
+    void updatePostStatus(Integer postID, String status);
 }

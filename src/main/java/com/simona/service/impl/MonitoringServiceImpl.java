@@ -6,7 +6,7 @@ import com.simona.model.dto.PointDTO;
 import com.simona.model.dto.PostDTO;
 import com.simona.model.dto.RegionDTO;
 import com.simona.model.dto.UpdatePointDTO;
-import com.simona.service.AggregationControlPointsService;
+//import com.simona.service.AggregationControlPointsService;
 import com.simona.service.DtoService;
 import com.simona.service.MonitoringService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +25,8 @@ public class MonitoringServiceImpl implements MonitoringService {
     @Autowired
     private DtoService dtoService;
 
-    @Autowired
-    private AggregationControlPointsService aggregationControlPointsService;
+//    @Autowired
+//    private AggregationControlPointsService aggregationControlPointsService;
 
     @Autowired
     private AggregationStationsServiceImpl aggregationStationsService;
@@ -183,5 +183,18 @@ public class MonitoringServiceImpl implements MonitoringService {
             lastPostTraces.setSpeed(speed);
             lastPostTraces.setDirection(direction);
 //        }
+    }
+
+    @Override
+    public void updatePostStatus(Integer postID, String status) {
+        for (Post post : posts) {
+            if (post.getId().equals(postID)) {
+                if ("OFFLINE".equals(status)) {
+                    post.setState(1);
+                } else if ("ONLINE".equals(status)) {
+                    post.setState(0);
+                }
+            }
+        }
     }
 }

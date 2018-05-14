@@ -314,7 +314,7 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                     var total = 0;
                     angular.forEach(response.data[0].postDTOs[0].rserviceDTOs, function(rserviceDTO){
                         total = rserviceDTO.count + total;
-                    })
+                    });
                 $scope.totalRservice = total;
                 },
                 function error (response) {
@@ -355,7 +355,13 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
             if (updatedObject.type === "POST_STATUS") {
                 MonitoringService.updatePostStatus(updatedObject)
                     .then(function success(response) {
-                            //todo update post status. In stage 1 status always ONLINE
+                            //todo update post status for one post.
+                            if (updatedObject.status === "ONLINE") {
+                                $scope.regions[0].postDTOs[0].iconName = "backCar.png";
+                            }
+                            if (updatedObject.status === "OFFLINE") {
+                                $scope.regions[0].postDTOs[0].iconName = "greenCar.png";
+                            }
                         },
                         function error(response) {
                             $scope.message = '';

@@ -11,7 +11,8 @@ import java.util.List;
 @Getter
 @Setter
 public class PostDTO {
-    private Long id;
+
+    private Integer id;
 
     private String name;
 

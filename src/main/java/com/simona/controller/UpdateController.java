@@ -80,6 +80,8 @@ public class UpdateController {
                                        @RequestParam(value = "type",required=false) String type,
                                        @RequestParam(value = "packetID",required=false ) Integer packetID) {
         log.info("Update Post Status| " + "{\"status\":\"" + status + "\",\"postID\":" + postID + ",\"type\":\"" + type + "\",\"packetID\":" + packetID + "}");
+
+        monitoringService.updatePostStatus(postID, status);
         return HttpStatus.OK;
     }
 }
