@@ -47,19 +47,27 @@
                                                 <div ng-repeat="detected in mrms.rserviceDTOs">
                                                     <div class="row h-100">
                                                         <div class="col-sm-10">
-                                                            {{detected.name}}
+                                                            <strong>{{detected.name}}</strong>
                                                         </div>
                                                         <div class="col-sm-2">
-                                                            {{detected.count}}
+                                                            <strong>{{detected.count}}</strong>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="row h-100">
-                                                    <div class="col-sm-10">
-                                                        <strong>Всего</strong>
+                                                    <div class="row h-100">
+                                                        <div class="col-sm-10" style="padding-left: 50px;">
+                                                            {{detected.detected}}
+                                                        </div>
+                                                        <div class="col-sm-2">
+                                                            {{detected.detectedcount}}
+                                                        </div>
                                                     </div>
-                                                    <div class="col-sm-2">
-                                                        <strong>{{totalRservice}}</strong>
+                                                    <div class="row h-100">
+                                                        <div class="col-sm-10" style="padding-left: 50px;">
+                                                            {{detected.measured}}
+                                                        </div>
+                                                        <div class="col-sm-2">
+                                                            {{detected.measuredcount}}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

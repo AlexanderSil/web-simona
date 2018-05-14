@@ -3,8 +3,10 @@ package com.simona.service.impl;
 import com.simona.model.*;
 import com.simona.model.dto.*;
 import com.simona.service.DtoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,22 +16,63 @@ import java.util.List;
 @Service
 public class DtoServiceImpl implements DtoService {
 
+    @Autowired
+    private MonitoringServiceImpl monitoringService;
+
     @Override
     public List<RserviceDTO> getRserviceDTOs(Iterable<Rservice> rservices) {
         List<RserviceDTO> rserviceDTOs = new LinkedList<>();
 
+        List<ControlPoint> controlPoints = toList(monitoringService.controlPoints);
+
+        RserviceDTO rserviceDTO = new RserviceDTO();
+        rserviceDTO.setName("Всего:");
+        rserviceDTO.setCount(controlPoints.size());
+        rserviceDTO.setDetected("Обнаружено:");
+        rserviceDTO.setDetectedcount(controlPoints.size());
+        rserviceDTO.setMeasured("Измерено:");
+        rserviceDTO.setMeasuredcount(controlPoints.size());
+
+        rserviceDTOs.add(rserviceDTO);
+
         for (Rservice rservice : rservices) {
             if (rservice.getStations().size() >= 1) {
-                RserviceDTO rserviceDTO = new RserviceDTO();
+                rserviceDTO = new RserviceDTO();
 
                 rserviceDTO.setName(rservice.getName());
-                rserviceDTO.setCount(rservice.getStations().size());
+                rserviceDTO.setDetected("Обнаружено:");
+                rserviceDTO.setMeasured("Измерено:");
+
+                for (Station station: rservice.getStations()) {
+                    for (ControlPoint controlPoint : station.getControlPoints()) {
+                        if (controlPoint.getStatus() != null) {
+                            if (controlPoint.getStatus() == 1) {// желтого цвета – РЭС выявлена (Обнаружено)
+                                rserviceDTO.setDetectedcount(rserviceDTO.getDetectedcount() + 1);
+                            } else if (controlPoint.getStatus() == 2) {// зеленого цвета – РЭС выявлена и измерена (Измерено)
+                                rserviceDTO.setMeasuredcount(rserviceDTO.getMeasuredcount() + 1);
+                            }
+                        }
+                    }
+                    rserviceDTO.setCount(rserviceDTO.getCount() + station.getControlPoints().size());
+                }
 
                 rserviceDTOs.add(rserviceDTO);
             }
         }
-
         return rserviceDTOs;
+    }
+
+    public static <E> List<E> toList(Iterable<E> iterable) {
+        if(iterable instanceof List) {
+            return (List<E>) iterable;
+        }
+        ArrayList<E> list = new ArrayList<E>();
+        if(iterable != null) {
+            for(E e: iterable) {
+                list.add(e);
+            }
+        }
+        return list;
     }
 
     @Override
@@ -38,7 +81,7 @@ public class DtoServiceImpl implements DtoService {
         postDTO.setId(post.getId());
         postDTO.setState(post.getState());
         if (post.getState() == null || post.getState() == 1) {
-            postDTO.setIconName("backCar.png");
+            postDTO.setIconName("blackCar.png");
         }
         if (post.getState() != null && post.getState() == 0) {
             postDTO.setIconName("greenCar.png");

@@ -319,13 +319,13 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
         MonitoringService.getRegions()
             .then(function success(response) {
                     $scope.regions = response.data;
-                    $scope.mobileRadioMonitoringStations = response.data[0].postDTOs;
+                    // $scope.mobileRadioMonitoringStations = response.data[0].postDTOs;
 
-                    var total = 0;
-                    angular.forEach(response.data[0].postDTOs[0].rserviceDTOs, function(rserviceDTO){
-                        total = rserviceDTO.count + total;
-                    });
-                $scope.totalRservice = total;
+                    // var total = 0;
+                    // angular.forEach(response.data[0].postDTOs[0].rserviceDTOs, function(rserviceDTO){
+                    //     total = rserviceDTO.count + total;
+                    // });
+                // $scope.totalRservice = total;
                 },
                 function error (response) {
                     $scope.message = '';
@@ -367,10 +367,10 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                     .then(function success(response) {
                             //todo update post status for one post.
                             if (updatedObject.status === "ONLINE") {
-                                $scope.regions[0].postDTOs[0].iconName = "backCar.png";
+                                $scope.regions[0].postDTOs[0].iconName = "greenCar.png";
                             }
                             if (updatedObject.status === "OFFLINE") {
-                                $scope.regions[0].postDTOs[0].iconName = "greenCar.png";
+                                $scope.regions[0].postDTOs[0].iconName = "blackCar.png";
                             }
                         },
                         function error(response) {
@@ -402,6 +402,7 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                 MonitoringService.updatePostControlPointStatus(rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, $scope.view.zoom, updatedObject)
                     .then(function success(response) {
                             showMonitoringObjects(response.data);
+                            getRegionsWithMonitoringStations();
                         },
                         function error(response) {
                             $scope.message = '';
@@ -424,6 +425,7 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
         var socket;
         var createSocket = function() {
             // var res = new WebSocket('ws://192.168.1.88:10102/');
+            // var res = new WebSocket('ws://0.0.0.0:10102/');
             var res = new WebSocket('ws://0.0.0.0:10102/');
             res.onopen = function() {
                 console.log("Connect Websocket to Symona server.");

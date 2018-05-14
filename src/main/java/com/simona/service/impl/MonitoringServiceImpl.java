@@ -2,10 +2,7 @@ package com.simona.service.impl;
 
 import com.simona.dao.*;
 import com.simona.model.*;
-import com.simona.model.dto.PointDTO;
-import com.simona.model.dto.PostDTO;
-import com.simona.model.dto.RegionDTO;
-import com.simona.model.dto.UpdatePointDTO;
+import com.simona.model.dto.*;
 //import com.simona.service.AggregationControlPointsService;
 import com.simona.service.DtoService;
 import com.simona.service.MonitoringService;
@@ -46,8 +43,8 @@ public class MonitoringServiceImpl implements MonitoringService {
     @Autowired
     private PostTracesDao postTracesDao;
 
-//    private Date lastGettingControlPointFromDB;
-//    private Iterable<ControlPoint> controlPoints;
+    private Date lastGettingControlPointFromDB;
+    public Iterable<ControlPoint> controlPoints;
 
     private Date lastGettingStationsFromDB;
     private Iterable<Station> stations;
@@ -61,12 +58,14 @@ public class MonitoringServiceImpl implements MonitoringService {
     private Date lastGettingRservicesFromDB;
     private Iterable<Rservice> rservices;
 
+    private List<RegionDTO> regionDtos;
+
     @Override
     public List<RegionDTO> getRegionsDTO() {
 
         //Add regions
         List<Region> regionList = daoMock.findAllRegions();
-        List<RegionDTO> regionDtos = dtoService.getRegionDTOs(regionList);
+        regionDtos = dtoService.getRegionDTOs(regionList);
 
         if (lastGettingPostsFromDB == null
                 || (Math.abs(lastGettingPostsFromDB.getTime() - new Date().getTime())/60)/1000 > 60) { //update data from db 1 hour
@@ -77,6 +76,12 @@ public class MonitoringServiceImpl implements MonitoringService {
                 || (Math.abs(lastGettingRservicesFromDB.getTime() - new Date().getTime())/60)/1000 > 60) { //update data from db 1 hour
             lastGettingRservicesFromDB = new Date();
             rservices = rserviceDao.findAll();
+        }
+
+        if (lastGettingControlPointFromDB == null
+                || (Math.abs(lastGettingControlPointFromDB.getTime() - new Date().getTime())/60)/1000 > 10) { //update data from db 10 min
+            lastGettingControlPointFromDB = new Date();
+            controlPoints = controlPointDao.findAll();
         }
 
         //Add Rservices to Posts
@@ -151,6 +156,9 @@ public class MonitoringServiceImpl implements MonitoringService {
         for (Station station : stations) {
             for (ControlPoint controlPoint : station.getControlPoints()) {
                 if (controlPoint.getId().equals(point.getPointID())) {
+
+                    updateRegion(point, controlPoint);
+
                     if ("NOTHING".equals(point.getStatus())) {
                         controlPoint.setStatus(0);
                     }
@@ -170,6 +178,31 @@ public class MonitoringServiceImpl implements MonitoringService {
                         controlPoint.getStation().setStatus(2);
                     }
                 }
+            }
+        }
+    }
+
+    private void updateRegion(UpdatePointDTO point, ControlPoint controlPoint) {
+        for (RegionDTO regionDto : regionDtos) {
+            for (PostDTO postDTO : regionDto.getPostDTOs()) {
+                for (RserviceDTO rserviceDTO : postDTO.getRserviceDTOs()) {
+                    if (postDTO.getName().equals(controlPoint.getStation().getRservice().getName())) {
+                        if (controlPoint.getStatus() != null) {
+                            if (controlPoint.getStatus() == 1) {// желтого цвета – РЭС выявлена (Обнаружено)
+                                rserviceDTO.setDetectedcount(rserviceDTO.getDetectedcount() - 1);
+                            } else if (controlPoint.getStatus() == 2) {// зеленого цвета – РЭС выявлена и измерена (Измерено)
+                                rserviceDTO.setMeasuredcount(rserviceDTO.getMeasuredcount() - 1);
+                            }
+                            if ("DETECT".equals(point.getStatus())) {
+                                rserviceDTO.setDetectedcount(rserviceDTO.getDetectedcount() + 1);
+                            }
+                            if ("MEASUREMENT".equals(point.getStatus())){
+                                rserviceDTO.setMeasuredcount(rserviceDTO.getMeasuredcount() + 1);
+                            }
+                        }
+                    }
+                }
+
             }
         }
     }
