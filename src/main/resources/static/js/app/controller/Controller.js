@@ -497,9 +497,9 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
          **********************************************************************************************************/
         var socket;
         var createSocket = function() {
-            // var res = new WebSocket('ws://192.168.1.88:10102/');
+            var res = new WebSocket('ws://192.168.1.88:10102/');
             // var res = new WebSocket('ws://0.0.0.0:10102/');
-            var res = new WebSocket('ws://127.0.0.1:10103/');
+            // var res = new WebSocket('ws://127.0.0.1:10103/');
             res.onopen = function() {
                 console.log("Connect Websocket to Symona server.");
             };
