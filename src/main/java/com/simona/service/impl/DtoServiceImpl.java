@@ -234,7 +234,7 @@ public class DtoServiceImpl implements DtoService {
         pointDTO.setLatitude(stationDTO.getLatitude());
 
         String info = "";
-        if (stationDTO.getStatus() == null) {// серого цвета - РЭС, подлежащая контролю (не выявлена, не измерена)
+        if (stationDTO.getControlPoints().get(0).getStatus() == null) {// серого цвета - РЭС, подлежащая контролю (не выявлена, не измерена)
             if (stationDTO.getUpdated() != null && stationDTO.getUpdated().isBefore(LocalDateTime.now().minusMinutes(1))) {
                 pointDTO.setImageName("greyTriangleSelected.png");
             } else {
@@ -242,7 +242,7 @@ public class DtoServiceImpl implements DtoService {
                 stationDTO.setUpdated(null);
             }
             info = info + "<p class='popupTemplateContentGrey'><b>{MARRIEDRATE} "+ stationDTO.getNick_name() +" </b></p>";
-        } else if (stationDTO.getStatus() == 1) {// желтого цвета – РЭС выявлена (не измерена)
+        } else if (stationDTO.getControlPoints().get(0).getStatus() == 1) {// желтого цвета – РЭС выявлена (не измерена)
             if (stationDTO.getUpdated() != null && stationDTO.getUpdated().isBefore(LocalDateTime.now().minusMinutes(1))) {
                 pointDTO.setImageName("yellowTriangleSelected.png");
             } else {
@@ -250,7 +250,7 @@ public class DtoServiceImpl implements DtoService {
                 stationDTO.setUpdated(null);
             }
             info = info + "<p class='popupTemplateContentYellow'><b>{MARRIEDRATE} " + stationDTO.getNick_name() +" </b></p>";
-        } else if (stationDTO.getStatus() == 2) {// зеленого цвета – РЭС выявлена и измерена
+        } else if (stationDTO.getControlPoints().get(0).getStatus() == 2) {// зеленого цвета – РЭС выявлена и измерена
             if (stationDTO.getUpdated() != null && stationDTO.getUpdated().isBefore(LocalDateTime.now().minusMinutes(1))) {
                 pointDTO.setImageName("greenTriangleSelected.png");
             } else {
