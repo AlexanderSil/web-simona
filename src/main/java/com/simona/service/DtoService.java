@@ -10,14 +10,22 @@ import java.util.List;
  */
 public interface DtoService {
 
-    List<RserviceDTO> getRserviceDTOs(Iterable<Rservice> rservices);
+    List<RserviceDTO> getRserviceDTOs(Iterable<Rservice> rservices, List<ControlPoint> controlPoints);
 
-    PostDTO getPostDTO(Post post);
+    PostDTOTemp getPostDTO(Post post);
 
     List<RegionDTO> getRegionDTOs(List<Region> regionList);
 
     PointDTO getPointDto(ControlPoint controlPoint);
 
+    PointDTO getPointDto(StationDTO stationDTO);
+
     PointDTO getPointsDTOFromPosts(PostTraces postTraces);
+
+    List<StationDTO> getStationDTOs(Iterable<Station> stations);
+
+    List<PostDTO> getPostDTOs(Iterable<Post> posts, PostTraces lastPostTraces);
+
+    String getImageNameForPost(Double direction);
 
 }

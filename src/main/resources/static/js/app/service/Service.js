@@ -2,10 +2,120 @@ var simonaService = angular.module('simonaApp.services', ['ngResource']);
 
 simonaService.service('MonitoringService', [ '$http', function($http) {
 
+
+    /*******************************************************************************************************************
+     * Control Points - (Base Stations)
+     *******************************************************************************************************************/
+    this.getBaseStationFromDB = function getRegions(zoom, mrmsIds, rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude) {
+        return $http({
+            method : 'GET',
+            url : "base/stations",
+            params: {
+                zoom: zoom,
+                mrmsIds: mrmsIds,
+                rightTopLatitude: rightTopLatitude,
+                rightTopLongtitude: rightTopLongtitude,
+                leftBottomLatitude: leftBottomLatitude,
+                leftBottomLongtitude: leftBottomLongtitude
+            }
+        });
+    };
+    this.getActualControlPoints = function getRegions(zoom, mrmsIds, rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude) {
+        return $http({
+            method : 'GET',
+            url : "base/stations/actual",
+            params: {
+                zoom: zoom,
+                mrmsIds: mrmsIds,
+                rightTopLatitude: rightTopLatitude,
+                rightTopLongtitude: rightTopLongtitude,
+                leftBottomLatitude: leftBottomLatitude,
+                leftBottomLongtitude: leftBottomLongtitude
+            }
+        });
+    };
+    this.updateControlPointStatus = function updatePostControlPointStatus(zoom, mrmsIds, updateObject, rightTopLatitude, rightTopLongitude, leftBottomLatitude, leftBottomLongitude) {
+        return $http({
+            method : 'GET',
+            url : "updatePostControlPointStatus",
+            params: {
+                rightTopLatitude: rightTopLatitude,
+                rightTopLongitude: rightTopLongitude,
+                leftBottomLatitude: leftBottomLatitude,
+                leftBottomLongitude: leftBottomLongitude,
+                zoom: zoom,
+                mrmsIds: mrmsIds,
+                points: updateObject.points,
+                postID: updateObject.postID,
+                type: updateObject.type,
+                packetID: updateObject.packetID
+            }
+        });
+    }
+
+
+
+
+    /*******************************************************************************************************************
+     * Posts
+     *******************************************************************************************************************/
+    this.getPostsFromDB = function getPostList(zoom, mrmsIds) {
+        return $http({
+            method : 'GET',
+            url : "posts",
+            params: {
+                zoom: zoom,
+                mrmsIds: mrmsIds
+            }
+        });
+    };
+    this.getActualPostList = function getPostList(zoom, mrmsIds) {
+        return $http({
+            method : 'GET',
+            url : "posts/actual",
+            params: {
+                zoom: zoom,
+                mrmsIds: mrmsIds
+            }
+        });
+    };
+    this.updatePostLocation = function updatePostLocation(zoom, mrmsIds, updateObject) {
+        return $http({
+            method : 'GET',
+            url : "/posts/update",
+            params: {
+                zoom: zoom,
+                mrmsIds: mrmsIds,
+                coordLat: updateObject.coord.lat,
+                coordLon: updateObject.coord.lon,
+                speed: updateObject.speed,
+                direction: updateObject.direction,
+                postID: updateObject.postID,
+                type: updateObject.type,
+                packetID: updateObject.packetID
+            }
+        });
+    };
+
+
+
+
+    /*******************************************************************************************************************
+     * Regions Info
+     *******************************************************************************************************************/
     this.getRegions = function getRegions() {
         return $http({
             method : 'GET',
             url : "regions"
+        });
+    };
+    this.actualRegionsInfo = function getRegions(mrmsIds) {
+        return $http({
+            method : 'GET',
+            url : "region/actual/info",
+            params: {
+                mrmsIds: mrmsIds
+            }
         });
     };
     // this.getBaseStation = function getRegions() {
@@ -14,36 +124,10 @@ simonaService.service('MonitoringService', [ '$http', function($http) {
     //         url : "api/base"
     //     });
     // };
-    this.getBaseStation = function getRegions(rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, zoom, regionIds, mrmsIds) {
-        return $http({
-            method : 'GET',
-            url : "points",
-            params: {
-                rightTopLatitude: rightTopLatitude,
-                rightTopLongtitude: rightTopLongtitude,
-                leftBottomLatitude: leftBottomLatitude,
-                leftBottomLongtitude: leftBottomLongtitude,
-                zoom: zoom,
-                regionIds: regionIds,
-                mrmsIds: mrmsIds
-            }
-        });
-    };
-    this.getPostList = function getPostList(rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, zoom, regionIds, mrmsIds) {
-        return $http({
-            method : 'GET',
-            url : "posts",
-            params: {
-                rightTopLatitude: rightTopLatitude,
-                rightTopLongtitude: rightTopLongtitude,
-                leftBottomLatitude: leftBottomLatitude,
-                leftBottomLongtitude: leftBottomLongtitude,
-                zoom: zoom,
-                regionIds: regionIds,
-                mrmsIds: mrmsIds
-            }
-        });
-    };
+
+
+
+
     this.updatePostStatus = function update(updatedObject) {
         return $http({
             method : 'GET',
@@ -56,43 +140,6 @@ simonaService.service('MonitoringService', [ '$http', function($http) {
             }
         });
     };
-    this.updatePostLocation = function updatePostLocation(rightTopLatitude, rightTopLongitude, leftBottomLatitude, leftBottomLongitude, zoom, updateObject) {
-        return $http({
-            method : 'GET',
-            url : "updatePostLocation",
-            params: {
-                rightTopLatitude: rightTopLatitude,
-                rightTopLongitude: rightTopLongitude,
-                leftBottomLatitude: leftBottomLatitude,
-                leftBottomLongitude: leftBottomLongitude,
-                zoom: zoom,
-                coordLat: updateObject.coord.lat,
-                coordLon: updateObject.coord.lon,
-                speed: updateObject.speed,
-                direction: updateObject.direction,
-                postID: updateObject.postID,
-                type: updateObject.type,
-                packetID: updateObject.packetID
-            }
-        });
-    };
-    this.updatePostControlPointStatus = function updatePostControlPointStatus(rightTopLatitude, rightTopLongitude, leftBottomLatitude, leftBottomLongitude, zoom, updateObject) {
-        return $http({
-            method : 'GET',
-            url : "updatePostControlPointStatus",
-            params: {
-                rightTopLatitude: rightTopLatitude,
-                rightTopLongitude: rightTopLongitude,
-                leftBottomLatitude: leftBottomLatitude,
-                leftBottomLongitude: leftBottomLongitude,
-                zoom: zoom,
-                points: updateObject.points,
-                postID: updateObject.postID,
-                type: updateObject.type,
-                packetID: updateObject.packetID
-            }
-        });
-    }
 } ]);
 
 simonaService.factory('UserService', function($resource) {

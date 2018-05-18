@@ -96,10 +96,12 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                     // }]
                 // }
             });
-        }
+        };
         var graphicsLayer = new GraphicsLayer();/*** Add graphic layer for Control Points*/
+        // $scope.graphicsLayerTest = graphicsLayer;
         map.add(graphicsLayer);
         var graphicsLayerPosts = new GraphicsLayer();/*** Add graphic layer for Posts*/
+        // $scope.graphicsLayerPostsTest = graphicsLayerPosts;
         map.add(graphicsLayerPosts);
 
         /***********************************
@@ -130,7 +132,7 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
 
                     console.log("Zoom - " + view.zoom);
 
-                    $scope.sendRequest();
+                    $scope.getActualPostsAndBaseStations();
 
                 }
             }
@@ -147,19 +149,23 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
             }
         };
 
-        showPosts = function showPosts(posts) {
+        showNewPosts = function showPosts(posts) {
             graphicsLayerPosts.removeAll();
             // console.log("baseStations.length - " + baseStations.length);
             for (var u = 0; u < posts.length; u++) {
-                graphicsLayerPosts.add(createGraphicObject("images/" + posts[u].imageName,
-                    posts[u].latitude,
-                    posts[u].longitude,
-                    posts[u].info));
+                $scope.post = createGraphicObject("images/" + posts[u].imageName,
+                    posts[u].lastPostTraces.latitude,
+                    posts[u].lastPostTraces.longitude,
+                    posts[u].info);
+                graphicsLayerPosts.add($scope.post);
             }
         };
 
+        removePosts = function removePosts() {
+            graphicsLayerPosts.remove($scope.post);
+        };
+
         getRegionsWithMonitoringStations();
-        // getPosts();
 
         $scope.webMercatorUtils = webMercatorUtils;
 
@@ -169,18 +175,58 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
 
 
     /***********************************
-     * Send request to server and after show gets base stations
+     * Send request to server and after show actual base stations and posts
      ************************************/
-    $scope.sendRequest = function () {
+    $scope.getActualPostsAndBaseStations = function () {
         // console.log("Zoom - " + $scope.view.zoom);
 
         rightTopLatitude = $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmax, $scope.view.extent.ymax)[1];
         rightTopLongtitude = $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmax, $scope.view.extent.ymax)[0];
         leftBottomLatitude = $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmin, $scope.view.extent.ymin)[1];
         leftBottomLongtitude = $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmin, $scope.view.extent.ymin)[0];
-        subscribePostServerSymonaWebSocket();
-        getBaseStations(rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, $scope.view.zoom, $scope.selectedObject.regionIds, $scope.selectedObject.mrmsIds);
-        getPosts(rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, $scope.view.zoom, $scope.selectedObject.regionIds, $scope.selectedObject.mrmsIds);
+
+        getActualBaseStations($scope.view.zoom, $scope.selectedObject.mrmsIds, rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude);
+        getActualPosts($scope.view.zoom, $scope.selectedObject.mrmsIds);
+    };
+
+
+    /***********************************
+     * Load Posts and Control Points from data base.
+     ************************************/
+    $scope.loadDataFromDB = function () {
+        MonitoringService.getPostsFromDB($scope.view.zoom, $scope.selectedObject.mrmsIds)
+            .then(function success(response) {
+                    showNewPosts(response.data);
+
+                    rightTopLatitude = $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmax, $scope.view.extent.ymax)[1];
+                    rightTopLongtitude = $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmax, $scope.view.extent.ymax)[0];
+                    leftBottomLatitude = $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmin, $scope.view.extent.ymin)[1];
+                    leftBottomLongtitude = $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmin, $scope.view.extent.ymin)[0];
+                    MonitoringService.getBaseStationFromDB($scope.view.zoom, $scope.selectedObject.mrmsIds, rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude)
+                        .then(function success(response) {
+                                showMonitoringObjects(response.data);
+                            },
+                            function error(response) {
+                                $scope.message = '';
+                                if (response.status === 404) {
+                                    console.log("BaseStation not found in DB!");
+                                }
+                                else {
+                                    console.log("Error getting BaseStation from DB!");
+                                }
+                            });
+
+                },
+                function error(response) {
+                    $scope.message = '';
+                    if (response.status === 404) {
+                        console.log("Posts not found in DB!");
+                    }
+                    else {
+                        console.log("Error getting Posts from DB!");
+                    }
+                });
+
     };
 
     /***********************************
@@ -203,21 +249,21 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                     if ((document.getElementById($scope.regions[i].id).checked) == false) {
                         $scope.selectedObject.regionIds.push($scope.regions[i].id);
                     } else {
-                        for (var m = 0; m < $scope.regions[i].postDTOs.length; m++) {
+                        for (var m = 0; m < $scope.regions[i].postDTOTemps.length; m++) {
 
-                            var index = $scope.selectedObject.mrmsIds.indexOf($scope.regions[i].postDTOs[m].name);
+                            var index = $scope.selectedObject.mrmsIds.indexOf($scope.regions[i].postDTOTemps[m].name);
                             if (index > -1) {
                                 $scope.selectedObject.mrmsIds.splice(index, 1);
                             }
 
-                            document.getElementById($scope.regions[i].postDTOs[m].id).checked = false;
+                            document.getElementById($scope.regions[i].postDTOTemps[m].id).checked = false;
                         }
                     }
                 } else if ((document.getElementById($scope.regions[i].id).checked)) {
                         $scope.selectedObject.regionIds.push($scope.regions[i].id);
                 }
             }
-            sendToSocket({func: "SUBSC_CONTROL_POINT"});//subscribe to all control points
+
         }
 
         if (isMRMS) {
@@ -225,59 +271,51 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
             for (var i = 0; i < $scope.regions.length; i++) {
                 for (var j = 0; j < $scope.selectedObject.regionIds.length; j++) {
                     if ($scope.regions[i].id == $scope.selectedObject.regionIds[j]) {
-                        for (var m = 0; m < $scope.regions[i].postDTOs.length; m++) {
-                            if ($scope.regions[i].postDTOs[m].id == item.mrms.id) {
-                                if ((document.getElementById($scope.regions[i].postDTOs[m].id).checked) == false) {
-                                    $scope.selectedObject.mrmsIds.push($scope.regions[i].postDTOs[m].id);
+                        for (var m = 0; m < $scope.regions[i].postDTOTemps.length; m++) {
+                            if ($scope.regions[i].postDTOTemps[m].id == item.mrms.id) {
+                                if ((document.getElementById($scope.regions[i].postDTOTemps[m].id).checked) == false) {
+                                    $scope.selectedObject.mrmsIds.push($scope.regions[i].postDTOTemps[m].id);
                                 }
                             } else {
-                                if ((document.getElementById($scope.regions[i].postDTOs[m].id).checked)) {
-                                    $scope.selectedObject.mrmsIds.push($scope.regions[i].postDTOs[m].id);
+                                if ((document.getElementById($scope.regions[i].postDTOTemps[m].id).checked)) {
+                                    $scope.selectedObject.mrmsIds.push($scope.regions[i].postDTOTemps[m].id);
                                 }
                             }
                         }
                     }
                 }
             }
-            $scope.sendRequest();
+            $scope.loadDataFromDB();//get data from data base.
+            if ($scope.selectedObject.mrmsIds.length != 0) {
+                // subscribePostServerSymonaWebSocket();
+                sendToSocket({func: "SUBSC_CONTROL_POINT"});//subscribe to all control points
+            } else {
+                getRegionsWithMonitoringStations();
+            }
+
         }
         // console.log("Selected Regions ID's - " + $scope.selectedObject.regionIds + " || Selected MRMS name - " + $scope.selectedObject.mrmsIds);
     };
 
-    function subscribePostServerSymonaWebSocket() {
-        var data = {
-            func: "SUBSC_POST",
-            from: {
-                lat: $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmin, $scope.view.extent.ymin)[1],
-                lon: $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmin, $scope.view.extent.ymin)[0]
-            },
-            to: {
-                lat: $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmax, $scope.view.extent.ymax)[1],
-                lon: $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmax, $scope.view.extent.ymax)[0]
-            },
-        };
-        if ($scope.selectedObject.mrmsIds.length > 0) {
-            data["posts"] = $scope.selectedObject.mrmsIds.map(String);
-        }
-        sendToSocket(data);//Subscribe to WebSocket Symona server. SUBSC_POST
-    }
 
     /***********************************
      * Function Get data (BaseStations) from server.
      ************************************/
-    function getBaseStations (rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, zoom,
-                regionIds, mrmsIds) {
-        MonitoringService.getBaseStation(rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, zoom, regionIds, mrmsIds)
+    function getActualBaseStations (zoom, mrmsIds, rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude) {
+        MonitoringService.getActualControlPoints(zoom, mrmsIds, rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude)
             .then(function success(response) {
                     if ($scope.view.zoom === zoom) {
                         showMonitoringObjects(response.data);
                     } else {
                         //recursion for getting actual Control Points for zoom.
-                        getBaseStations($scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmax, $scope.view.extent.ymax)[1],
+                        getActualBaseStations(
+                            Math.trunc($scope.view.zoom),
+                            $scope.selectedObject.mrmsIds,
+                            $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmax, $scope.view.extent.ymax)[1],
                             $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmax, $scope.view.extent.ymax)[0],
                             $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmin, $scope.view.extent.ymin)[1],
-                            $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmin, $scope.view.extent.ymin)[0],
-                            Math.trunc($scope.view.zoom));
+                            $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmin, $scope.view.extent.ymin)[0]
+                            );
                         console.log("Recursion!");
                     }
                 },
@@ -295,11 +333,10 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
     /***********************************
      * Function Get data (Posts) from server.
      ************************************/
-    function getPosts (rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, zoom,
-                regionIds, mrmsIds) {
-        MonitoringService.getPostList(rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, zoom, regionIds, mrmsIds)
+    function getActualPosts (zoom, mrmsIds) {
+        MonitoringService.getActualPostList(zoom, mrmsIds)
             .then(function success(response) {
-                    showPosts(response.data);
+                    showNewPosts(response.data);
                 },
                 function error(response) {
                     $scope.message = '';
@@ -313,27 +350,62 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
     }
 
     /***********************************
-     *  Get data (Region's - MRMSs - BaseStations) from server.
+     *  Get data (Region's - MRMSs - BaseStations) from DB.
      ************************************/
-    function getRegionsWithMonitoringStations () {
+    function getRegionsWithMonitoringStations() {
+
+        $scope.regions = null;
+
         MonitoringService.getRegions()
             .then(function success(response) {
                     $scope.regions = response.data;
-                    // $scope.mobileRadioMonitoringStations = response.data[0].postDTOs;
-
-                    // var total = 0;
-                    // angular.forEach(response.data[0].postDTOs[0].rserviceDTOs, function(rserviceDTO){
-                    //     total = rserviceDTO.count + total;
-                    // });
-                // $scope.totalRservice = total;
                 },
                 function error (response) {
                     $scope.message = '';
                     if (response.status === 404){
-                        console.log("Regions not found!");
+                        console.log("Regions or posts not found!");
                     }
                     else {
-                        console.log("Error getting regions!");
+                        console.log("Error getting regions and posts info!");
+                    }
+                });
+    }
+
+        window.setInterval(function(){
+            if ($scope.selectedObject.mrmsIds.length > 0) {
+                getActualBaseStations(
+                    Math.trunc($scope.view.zoom),
+                    $scope.selectedObject.mrmsIds,
+                    $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmax, $scope.view.extent.ymax)[1],
+                    $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmax, $scope.view.extent.ymax)[0],
+                    $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmin, $scope.view.extent.ymin)[1],
+                    $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmin, $scope.view.extent.ymin)[0])
+            }
+
+        }, 5000);
+
+    /***********************************
+     *  Update Posts Info.
+     ************************************/
+    function getActualPostsInfo() {
+        MonitoringService.actualRegionsInfo()
+            .then(function success(response) {
+                    angular.forEach($scope.regions[0].postDTOTemps[0].rserviceDTOs, function(rserviceDTO){
+                        angular.forEach(response.data[0].postDTOTemps[0].rserviceDTOs, function(newRserviceDTO){
+                            if (rserviceDTO.name == newRserviceDTO.name) {
+                                rserviceDTO.detectedcount = newRserviceDTO.detectedcount;
+                                rserviceDTO.measuredcount = newRserviceDTO.measuredcount;
+                            }
+                        });
+                    });
+                },
+                function error (response) {
+                    $scope.message = '';
+                    if (response.status === 404){
+                        console.log("Status - " + response.status + ". Updated info for posts.");
+                    }
+                    else {
+                        console.log("Error updated info posts!");
                     }
                 });
     }
@@ -367,10 +439,10 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                     .then(function success(response) {
                             //todo update post status for one post.
                             if (updatedObject.status === "ONLINE") {
-                                $scope.regions[0].postDTOs[0].iconName = "greenCar.png";
+                                $scope.regions[0].postDTOTemps[0].iconName = "greenCar.png";
                             }
                             if (updatedObject.status === "OFFLINE") {
-                                $scope.regions[0].postDTOs[0].iconName = "blackCar.png";
+                                $scope.regions[0].postDTOTemps[0].iconName = "blackCar.png";
                             }
                         },
                         function error(response) {
@@ -383,10 +455,10 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                             }
                         });
             } else if (updatedObject.type === "POST_LOCATION") {
-                MonitoringService.updatePostLocation(rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, $scope.view.zoom, updatedObject)
+                MonitoringService.updatePostLocation($scope.view.zoom, $scope.selectedObject.mrmsIds, updatedObject)
                     .then(function success(response) {
                             if (response.data.length > 0) {
-                                showPosts(response.data);
+                                showNewPosts(response.data);//todo change to showNewPosts
                             }
                         },
                         function error(response) {
@@ -399,10 +471,11 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                             }
                         });
             } else if (updatedObject.type === "POST_CONTROL_POINT_STATUS") {
-                MonitoringService.updatePostControlPointStatus(rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude, $scope.view.zoom, updatedObject)
+                MonitoringService.updateControlPointStatus($scope.view.zoom, $scope.selectedObject.mrmsIds, updatedObject, rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude)
                     .then(function success(response) {
                             showMonitoringObjects(response.data);
-                            getRegionsWithMonitoringStations();
+                            // getRegionsWithMonitoringStations();//update info in posts after update control points.
+                            getActualPostsInfo();//update info in posts after update control points.
                         },
                         function error(response) {
                             $scope.message = '';
@@ -426,7 +499,7 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
         var createSocket = function() {
             // var res = new WebSocket('ws://192.168.1.88:10102/');
             // var res = new WebSocket('ws://0.0.0.0:10102/');
-            var res = new WebSocket('ws://0.0.0.0:10102/');
+            var res = new WebSocket('ws://127.0.0.1:10103/');
             res.onopen = function() {
                 console.log("Connect Websocket to Symona server.");
             };
@@ -464,4 +537,22 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                 socket.send(data);
             }
         };
+
+        function subscribePostServerSymonaWebSocket() {
+            var data = {
+                func: "SUBSC_POST",
+                from: {
+                    lat: $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmin, $scope.view.extent.ymin)[1],
+                    lon: $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmin, $scope.view.extent.ymin)[0]
+                },
+                to: {
+                    lat: $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmax, $scope.view.extent.ymax)[1],
+                    lon: $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmax, $scope.view.extent.ymax)[0]
+                },
+            };
+            if ($scope.selectedObject.mrmsIds.length > 0) {
+                data["posts"] = $scope.selectedObject.mrmsIds.map(String);
+            }
+            sendToSocket(data);//Subscribe to WebSocket Symona server. SUBSC_POST
+        }
     }]);

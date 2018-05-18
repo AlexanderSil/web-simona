@@ -2,28 +2,35 @@ package com.simona.model.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
+/**
+ * It is for show in menu
+ */
 @Getter
 @Setter
-public class RegionDTO {
-    private Long id;
+public class PostDTOTemp {
+
+    private Integer id;
+
     private String name;
+
+    private Integer state;
+    private String iconName; //todo use enum
 
     /**
      * Right top
      */
     private Double latitudeX;
-    private Double longitudeX;
 
+    private Double longitudeX;
     /**
      * Left bottom
      */
     private Double latitudeY;
+
     private Double longitudeY;
 
-    private List<PostDTOTemp> postDTOTemps;
+    private List<RserviceDTO> rserviceDTOs;
 }

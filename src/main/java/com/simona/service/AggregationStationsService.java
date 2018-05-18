@@ -2,6 +2,7 @@ package com.simona.service;
 
 import com.simona.model.Station;
 import com.simona.model.dto.PointDTO;
+import com.simona.model.dto.StationDTO;
 
 import java.util.List;
 
@@ -12,5 +13,9 @@ public interface AggregationStationsService {
 
     List<PointDTO> aggregateStations (Double rightTopLatitude, Double rightTopLongitude,
                                       Double leftBottomLatitude, Double leftBottomLongitude,
-                                      Iterable<Station> stations, Integer zoom);
+                                      List<StationDTO> stationDTOS, Integer zoom);
+
+//    List<PointDTO> aggregateStations (Double rightTopLatitude, Double rightTopLongitude,
+//                                      Double leftBottomLatitude, Double leftBottomLongitude,
+//                                      Iterable<Station> stations, Integer zoom);
 }
