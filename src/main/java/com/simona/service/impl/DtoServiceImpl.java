@@ -44,7 +44,13 @@ public class DtoServiceImpl implements DtoService {
 //            stationRserviceDTO.setStation();
             stationRserviceDTO.setName(station.getRservice().getName());
             stationRserviceDTO.setSys_id(station.getRservice().getSys_id());
-            stationRserviceDTO.setType(station.getRservice().getType());
+
+            RserviceTypesDTO rserviceTypesDTO = new RserviceTypesDTO();
+            rserviceTypesDTO.setId(station.getRservice().getRserviceTypes().getId());
+            rserviceTypesDTO.setName(station.getRservice().getRserviceTypes().getName());
+            rserviceTypesDTO.setType(station.getRservice().getRserviceTypes().getType());
+
+            stationRserviceDTO.setRserviceTypesDTO(rserviceTypesDTO);
             stationDTO.setRservice(stationRserviceDTO);
 
             stationDTO.setRserviceName(station.getRservice().getName());
@@ -70,7 +76,7 @@ public class DtoServiceImpl implements DtoService {
     }
 
     @Override
-    public List<PostDTO> getPostDTOs(Iterable<Post> posts, PostTraces postTraces) {
+    public List<PostDTO> getPostDTOs(Iterable<Post> posts) {
         List<PostDTO> postDTOS = new LinkedList<>();
 
         for (Post post : posts) {
@@ -79,32 +85,44 @@ public class DtoServiceImpl implements DtoService {
             postDTO.setState(post.getState());
             postDTO.setLast_packet(post.getLast_packet());
 
-//            List<PostTracesDTO> postTracesDTOS = new LinkedList<>();
-//            postTracesDTOS.addAll(post.getPostTraces());
-//            postDTO.setPostTraces(postTracesDTOS);
-
-//            for (PostTraces postTraces : post.getPostTraces()) {//todo activate when fixed (postTraces.getTimestamp().equals(post.getLast_packet()))
-//                if (postTraces.getId().equals(183187)) {
-//
-//                }
-//                if (postTraces.getTimestamp().equals(post.getLast_packet())) {
-                    PostTracesDTO postTracesDTO = new PostTracesDTO();
+            PostTracesDTO postTracesDTO = null;
+            for (PostTraces postTraces : post.getPostTraces()) {
+                if (postTracesDTO == null) {
+                    postTracesDTO = new PostTracesDTO();
                     postTracesDTO.setId(postTraces.getId());
                     postTracesDTO.setTimestamp(postTraces.getTimestamp());
                     postTracesDTO.setLatitude(postTraces.getLatitude());
                     postTracesDTO.setLongitude(postTraces.getLongitude());
                     postTracesDTO.setSpeed(postTraces.getSpeed());
                     postTracesDTO.setDirection(postTraces.getDirection());
+                } else {
+                    if (postTraces.getTimestamp().isAfter(postTracesDTO.getTimestamp())) {
+                        postTracesDTO.setId(postTraces.getId());
+                        postTracesDTO.setTimestamp(postTraces.getTimestamp());
+                        if (postTraces.getLatitude() != null && postTraces.getLatitude() != 0) {
+                            postTracesDTO.setLatitude(postTraces.getLatitude());
+                        }
+                        if (postTraces.getLongitude() != null && postTraces.getLongitude() != 0) {
+                            postTracesDTO.setLongitude(postTraces.getLongitude());
+                        }
+                        postTracesDTO.setSpeed(postTraces.getSpeed());
+                        if (postTraces.getDirection() != null && postTraces.getDirection() != 0) {
+                            postTracesDTO.setDirection(postTraces.getDirection());
+                        }
+                    }
+                }
+            }
 
-                    postDTO.setLastPostTraces(postTracesDTO);
-//                }
-//            }
+            if (postTracesDTO != null) {
+                postDTO.setLastPostTraces(postTracesDTO);
 
-            postDTO.setImageName(getImageNameForPost(postTraces.getDirection()));
-            postDTO.setInfo("Пост ID: " + post.getId()
-                    + (postTraces.getSpeed()!= null ? ". Скорость: " + postTraces.getSpeed().toString() + "km/h" : "" )
-                    + ". Long: " + postTraces.getLongitude() + "; Lat: " + postTraces.getLatitude());
-
+                postDTO.setImageName(getImageNameForPost(postTracesDTO.getDirection()));
+                postDTO.setInfo("Пост ID: " + post.getId()
+                        + (postTracesDTO.getSpeed() != null ? ". Скорость: " + postTracesDTO.getSpeed().toString() + "km/h" : "")
+                        + ". Long: " + postTracesDTO.getLongitude() + "; Lat: " + postTracesDTO.getLatitude());
+            } else {
+                postDTO.setLastPostTraces(new PostTracesDTO());
+            }
             postDTOS.add(postDTO);
         }
 
@@ -143,7 +161,7 @@ public class DtoServiceImpl implements DtoService {
             if (rservice.getStations().size() >= 1) {
                 rserviceDTO = new RserviceDTO();
 
-                rserviceDTO.setName(rservice.getName());
+                rserviceDTO.setName(rservice.getRserviceTypes().getName());
                 rserviceDTO.setDetected("Обнаружено:");
                 rserviceDTO.setMeasured("Измерено:");
 

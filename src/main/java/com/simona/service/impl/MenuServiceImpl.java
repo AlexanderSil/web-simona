@@ -77,7 +77,7 @@ public class MenuServiceImpl implements MenuService {
             Integer measurement = 0;
             for (PostDTOTemp postDTOTemp : regionDto.getPostDTOTemps()) {
                 for (RserviceDTO rserviceDTO : postDTOTemp.getRserviceDTOs()) {
-                    if (rserviceDTO.getName().equals(rservice.getName())) {
+                    if (rserviceDTO.getName().equals(rservice.getRserviceTypesDTO().getName())) {
                         if (oldControlPointDTO.getStatus() != null) {
                             if (oldControlPointDTO.getStatus() == 1) {// желтого цвета – РЭС выявлена (Обнаружено)
                                 rserviceDTO.setDetectedcount(rserviceDTO.getDetectedcount() - 1);

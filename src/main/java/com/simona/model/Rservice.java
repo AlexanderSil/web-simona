@@ -3,10 +3,7 @@ package com.simona.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Set;
 
 @Entity
@@ -23,5 +20,7 @@ public class Rservice {
 
     private String name;
 
-    private Integer type;
+    @ManyToOne
+    @JoinColumn(name="type", nullable=false)
+    private RserviceTypes rserviceTypes;
 }

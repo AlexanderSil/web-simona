@@ -24,9 +24,6 @@ public class PostsServiceImpl implements PostsService {
     @Autowired
     private PostDao postDao;
 
-    @Autowired
-    private PostTracesDao postTracesDao;
-
     private List<PostDTO> postDTOs = new LinkedList<>();
 
     @Override
@@ -34,9 +31,8 @@ public class PostsServiceImpl implements PostsService {
 
         Iterable<Integer> iterable = mrmsNames;
         Iterable<Post> posts = postDao.findAllById(iterable);//todo find list by mrmsNames
-        PostTraces lastPostTraces = postTracesDao.findLastPostTraces();
 
-        postDTOs = dtoService.getPostDTOs(posts, lastPostTraces);
+        postDTOs = dtoService.getPostDTOs(posts);
 
         return postDTOs;
     }

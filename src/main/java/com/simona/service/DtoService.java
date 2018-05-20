@@ -24,7 +24,7 @@ public interface DtoService {
 
     List<StationDTO> getStationDTOs(Iterable<Station> stations);
 
-    List<PostDTO> getPostDTOs(Iterable<Post> posts, PostTraces lastPostTraces);
+    List<PostDTO> getPostDTOs(Iterable<Post> posts);
 
     String getImageNameForPost(Double direction);
 

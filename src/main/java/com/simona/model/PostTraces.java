@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -18,7 +19,7 @@ public class PostTraces {
     @JoinColumn(name="pst_id", nullable=false)
     private Post post;
 
-    private Date timestamp;
+    private LocalDateTime timestamp;
 
     private Double latitude;
     private Double longitude;

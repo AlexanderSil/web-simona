@@ -12,5 +12,5 @@ public class StationRserviceDTO {
 
     private String name;
 
-    private Integer type;
+    private RserviceTypesDTO rserviceTypesDTO;
 }
