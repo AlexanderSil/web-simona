@@ -131,24 +131,40 @@ public class DtoServiceImpl implements DtoService {
     }
 
     @Override
-    public List<RserviceDTO> getRserviceDTOs(Iterable<Rservice> rservices, List<ControlPoint> controlPoints) {
+    public List<RserviceDTO> getRserviceDTOs(Iterable<Rservice> rservices, List<StationDTO> stationDTOS) {
         List<RserviceDTO> rserviceDTOs = new LinkedList<>();
 
         RserviceDTO rserviceDTO = new RserviceDTO();
         rserviceDTO.setName("Всего:");
-        rserviceDTO.setCount(controlPoints.size());
-
+        Integer size = 0;
         Integer detect = 0;
         Integer measurement = 0;
-        for (ControlPoint controlPoint : controlPoints) {
-            if (controlPoint.getStatus() != null) {
-                if (controlPoint.getStatus() == 1) {// желтого цвета – РЭС выявлена (Обнаружено, DETECT)
-                    detect = detect + 1;
-                } else if (controlPoint.getStatus() == 2) {// зеленого цвета – РЭС выявлена и измерена (Измерено, MEASUREMENT)
-                    measurement = measurement +1;
+        for (StationDTO stationDTO : stationDTOS) {
+            size = size + stationDTO.getControlPoints().size();
+
+            for (ControlPointDTO controlPoint : stationDTO.getControlPoints()) {
+                if (controlPoint.getStatus() != null) {
+                    if (controlPoint.getStatus() == 1) {// желтого цвета – РЭС выявлена (Обнаружено, DETECT)
+                        detect = detect + 1;
+                    } else if (controlPoint.getStatus() == 2) {// зеленого цвета – РЭС выявлена и измерена (Измерено, MEASUREMENT)
+                        measurement = measurement +1;
+                    }
                 }
             }
         }
+        rserviceDTO.setCount(size);
+
+//        Integer detect = 0;
+//        Integer measurement = 0;
+//        for (ControlPoint controlPoint : controlPoints) {
+//            if (controlPoint.getStatus() != null) {
+//                if (controlPoint.getStatus() == 1) {// желтого цвета – РЭС выявлена (Обнаружено, DETECT)
+//                    detect = detect + 1;
+//                } else if (controlPoint.getStatus() == 2) {// зеленого цвета – РЭС выявлена и измерена (Измерено, MEASUREMENT)
+//                    measurement = measurement +1;
+//                }
+//            }
+//        }
 
         rserviceDTO.setDetected("Обнаружено:");
         rserviceDTO.setDetectedcount(detect);
@@ -185,7 +201,7 @@ public class DtoServiceImpl implements DtoService {
     }
 
     @Override
-    public PostDTOTemp getPostDTO(Post post) {
+    public PostDTOTemp getPostDTOTemp(PostDTO post) {
         PostDTOTemp postDTOTemp = new PostDTOTemp();
         postDTOTemp.setId(post.getId());
         postDTOTemp.setState(post.getState());

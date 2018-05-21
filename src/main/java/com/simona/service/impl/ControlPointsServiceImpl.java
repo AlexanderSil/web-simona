@@ -4,6 +4,7 @@ import com.simona.dao.StationDao;
 import com.simona.model.Station;
 import com.simona.model.dto.*;
 import com.simona.service.ControlPointsService;
+import com.simona.service.DaoService;
 import com.simona.service.DtoService;
 import com.simona.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,6 @@ import java.util.List;
 @Service
 public class ControlPointsServiceImpl implements ControlPointsService {
 
-    @Autowired
-    private StationDao stationDao;
 
     @Autowired
     private AggregationStationsServiceImpl aggregationStationsService;
@@ -26,29 +25,21 @@ public class ControlPointsServiceImpl implements ControlPointsService {
     private MenuService menuService;
 
     @Autowired
-    private DtoService dtoService;
+    private DaoService daoService;
 
-    private List<StationDTO> stationDTOs = new LinkedList<>();
 
     @Override
     public List<PointDTO> getAggregatedControlPointDTO(Integer zoom, List<Integer> mrmsNames,
                                                        Double rightTopLatitude, Double rightTopLongitude,
                                                        Double leftBottomLatitude, Double leftBottomLongitude) {
 
-        Iterable<Station> stations = stationDao.findAll();//todo select by mrmsNames
-
-        stationDTOs = dtoService.getStationDTOs(stations);
+        List<StationDTO> stationDTOs = daoService.getStationDTOs();
 
         List<PointDTO> controlPointDTOs = new LinkedList<>();
         controlPointDTOs.addAll(aggregationStationsService.aggregateStations(rightTopLatitude, rightTopLongitude,
                 leftBottomLatitude, leftBottomLongitude, stationDTOs, zoom));
 
         return controlPointDTOs;
-    }
-
-    @Override
-    public void clearListPointDTO() {
-        stationDTOs = new LinkedList<>();
     }
 
     @Override
@@ -57,14 +48,14 @@ public class ControlPointsServiceImpl implements ControlPointsService {
                                                              Double leftBottomLatitude, Double leftBottomLongitude) {
         List<PointDTO> controlPointDTOs = new LinkedList<>();
         controlPointDTOs.addAll(aggregationStationsService.aggregateStations(rightTopLatitude, rightTopLongitude,
-                leftBottomLatitude, leftBottomLongitude, stationDTOs, zoom));
+                leftBottomLatitude, leftBottomLongitude, daoService.getStationDTOs(), zoom));
 
         return controlPointDTOs;
     }
 
     @Override
     public void updateControlPoint(UpdatePointDTO point, Integer postID, String type, Integer packetID) {
-        for (StationDTO stationDTO : stationDTOs) {
+        for (StationDTO stationDTO : daoService.getStationDTOs()) {
             for (ControlPointDTO controlPointDTO : stationDTO.getControlPoints()) {
                 if (controlPointDTO.getId().equals(point.getPointID())) {
 
@@ -95,7 +86,4 @@ public class ControlPointsServiceImpl implements ControlPointsService {
         }
     }
 
-    public List<StationDTO> getStationDTOs() {
-        return stationDTOs;
-    }
 }

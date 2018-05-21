@@ -5,14 +5,11 @@ import com.simona.model.dto.*;
 
 import java.util.List;
 
-/**
- * Created by alex on 3/24/18.
- */
 public interface DtoService {
 
-    List<RserviceDTO> getRserviceDTOs(Iterable<Rservice> rservices, List<ControlPoint> controlPoints);
+    List<RserviceDTO> getRserviceDTOs(Iterable<Rservice> rservices, List<StationDTO> stationDTOS);
 
-    PostDTOTemp getPostDTO(Post post);
+    PostDTOTemp getPostDTOTemp(PostDTO post);
 
     List<RegionDTO> getRegionDTOs(List<Region> regionList);
 

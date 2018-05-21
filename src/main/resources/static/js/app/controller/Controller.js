@@ -383,6 +383,8 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                     $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmax, $scope.view.extent.ymax)[0],
                     $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmin, $scope.view.extent.ymin)[1],
                     $scope.webMercatorUtils.xyToLngLat($scope.view.extent.xmin, $scope.view.extent.ymin)[0])
+                getActualPostsInfo();//update info in posts after update control points.
+                getActualPosts($scope.view.zoom, $scope.selectedObject.mrmsIds);
             }
 
         }, 5000);
@@ -394,12 +396,14 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
         MonitoringService.actualRegionsInfo()
             .then(function success(response) {
                     angular.forEach($scope.regions[0].postDTOTemps[0].rserviceDTOs, function(rserviceDTO){
-                        angular.forEach(response.data[0].postDTOTemps[0].rserviceDTOs, function(newRserviceDTO){
-                            if (rserviceDTO.name == newRserviceDTO.name) {
-                                rserviceDTO.detectedcount = newRserviceDTO.detectedcount;
-                                rserviceDTO.measuredcount = newRserviceDTO.measuredcount;
-                            }
-                        });
+                        if (response.data[0].postDTOTemps != null) {
+                            angular.forEach(response.data[0].postDTOTemps[0].rserviceDTOs, function(newRserviceDTO){
+                                if (rserviceDTO.name == newRserviceDTO.name) {
+                                    rserviceDTO.detectedcount = newRserviceDTO.detectedcount;
+                                    rserviceDTO.measuredcount = newRserviceDTO.measuredcount;
+                                }
+                            });
+                        }
                     });
                 },
                 function error (response) {

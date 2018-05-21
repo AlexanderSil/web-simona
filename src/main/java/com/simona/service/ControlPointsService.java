@@ -14,7 +14,6 @@ public interface ControlPointsService {
     List<PointDTO> getAggregatedControlPointDTO(Integer zoom, List<Integer> mrmsNames,
                                                 Double rightTopLatitude, Double rightTopLongitude,
                                                 Double leftBottomLatitude, Double leftBottomLongitude);
-    void clearListPointDTO();
 
     List<PointDTO> getActualAggregatedControlPointDTO(Integer zoom, List<Integer> mrmsNames,
                                                 Double rightTopLatitude, Double rightTopLongitude,
@@ -22,5 +21,5 @@ public interface ControlPointsService {
 
     void updateControlPoint(UpdatePointDTO point, Integer postID, String type, Integer packetID);
 
-    List<StationDTO> getStationDTOs();
+//    List<StationDTO> getStationDTOs();
 }

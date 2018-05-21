@@ -1,12 +1,9 @@
 package com.simona.service.impl;
 
-import com.simona.dao.*;
 import com.simona.model.*;
 import com.simona.model.dto.*;
 //import com.simona.service.AggregationControlPointsService;
-import com.simona.service.ControlPointsService;
-import com.simona.service.DtoService;
-import com.simona.service.MenuService;
+import com.simona.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,62 +14,44 @@ import java.util.*;
 @Service
 public class MenuServiceImpl implements MenuService {
 
-    @Autowired
-    private DaoMock daoMock;
 
     @Autowired
     private DtoService dtoService;
 
     @Autowired
-    private ControlPointDao controlPointDao;
+    private DaoService daoService;
 
-    @Autowired
-    private RserviceDao rserviceDao;
-
-    @Autowired
-    private PostDao postDao;
-
-    @Autowired
-    private ControlPointsService controlPointsService;
-
-    private List<RegionDTO> regionDtos = new LinkedList<>();
 
     @Override
     public List<RegionDTO> getRegionsDTO() {
-        regionDtos = new LinkedList<>();
 
-        //Add regions
-        List<Region> regionList = daoMock.findAllRegions();
-        regionDtos = dtoService.getRegionDTOs(regionList);
-
-        Iterable<Post> posts = postDao.findAll();
-        Iterable<Rservice> rservices = rserviceDao.findAll();
-        Iterable<ControlPoint> controlPoints = controlPointDao.findAll();
+        List<RegionDTO> regionDTOs = daoService.getRegionDTOs();
+        List<PostDTO> posts = daoService.getPostDTOs();
 
         //Add Rservices to Posts
         List<PostDTOTemp> postDTOTemps = new LinkedList<>();
-        for (Post post : posts) {
+        for (PostDTO post : posts) {
             PostDTOTemp postDTOTemp = new PostDTOTemp();
-            postDTOTemp = dtoService.getPostDTO(post);
-            postDTOTemp.setRserviceDTOs(dtoService.getRserviceDTOs(rservices, toList(controlPoints)));
+            postDTOTemp = dtoService.getPostDTOTemp(post);
+            postDTOTemp.setRserviceDTOs(daoService.getRserviceDTOs());
             postDTOTemps.add(postDTOTemp);
         }
-        for (RegionDTO regionDto : regionDtos) {
+        for (RegionDTO regionDto : regionDTOs) {
             regionDto.setPostDTOTemps(postDTOTemps);
         }
 
-        return regionDtos;
+        return regionDTOs;
     }
 
     @Override
     public List<RegionDTO> getActualRegions() {
-        return regionDtos;
+        return daoService.getRegionDTOs();
     }
 
     @Override
     public void updatePostInfo(UpdatePointDTO newPoint, ControlPointDTO oldControlPointDTO, StationRserviceDTO rservice) {
 
-        for (RegionDTO regionDto : regionDtos) {
+        for (RegionDTO regionDto : daoService.getRegionDTOs()) {
             Integer detect = 0;
             Integer measurement = 0;
             for (PostDTOTemp postDTOTemp : regionDto.getPostDTOTemps()) {
@@ -108,38 +87,10 @@ public class MenuServiceImpl implements MenuService {
         }
     }
 
-    //
-// @Override
-//    public List<PostDTOTemp> getActualRegions(List<Integer> mrmsNames) {
-////    public List<PostDTOTemp> getActualRegions(UpdatePointDTO point, ControlPointDTO controlPointDTO, String nameStation) {
-//        for (RegionDTO regionDto : regionDtos) {
-//            for (PostDTOTemp postDTOTemp : regionDto.getPostDTOTemps()) {
-//                for (RserviceDTO rserviceDTO : postDTOTemp.getRserviceDTOs()) {
-//                    if (postDTOTemp.getName().equals(nameStation)) {
-//                        if (controlPointDTO.getStatus() != null) {
-//                            if (controlPointDTO.getStatus() == 1) {// желтого цвета – РЭС выявлена (Обнаружено)
-//                                rserviceDTO.setDetectedcount(rserviceDTO.getDetectedcount() - 1);
-//                            } else if (controlPointDTO.getStatus() == 2) {// зеленого цвета – РЭС выявлена и измерена (Измерено)
-//                                rserviceDTO.setMeasuredcount(rserviceDTO.getMeasuredcount() - 1);
-//                            }
-//                            if ("DETECT".equals(point.getStatus())) {
-//                                rserviceDTO.setDetectedcount(rserviceDTO.getDetectedcount() + 1);
-//                            }
-//                            if ("MEASUREMENT".equals(point.getStatus())){
-//                                rserviceDTO.setMeasuredcount(rserviceDTO.getMeasuredcount() + 1);
-//                            }
-//                        }
-//                    }
-//                }
-//
-//            }
-//        }
-//        return regionDtos.get(0).getPostDTOTemps();//todo change when use more one region
-//    }
 
     @Override
     public void updatePostStatus(Integer postID, String status) {
-        for (RegionDTO regionDto : regionDtos) {
+        for (RegionDTO regionDto : daoService.getRegionDTOs()) {
             for (PostDTOTemp postDTOTemp : regionDto.getPostDTOTemps()) {
                 if (postDTOTemp.getId().equals(postID)) {
                     if ("OFFLINE".equals(status)) {
@@ -151,18 +102,4 @@ public class MenuServiceImpl implements MenuService {
             }
         }
     }
-
-    private static <E> List<E> toList(Iterable<E> iterable) {
-        if(iterable instanceof List) {
-            return (List<E>) iterable;
-        }
-        ArrayList<E> list = new ArrayList<E>();
-        if(iterable != null) {
-            for(E e: iterable) {
-                list.add(e);
-            }
-        }
-        return list;
-    }
-
 }

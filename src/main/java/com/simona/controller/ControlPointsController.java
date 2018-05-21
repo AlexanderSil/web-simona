@@ -32,7 +32,7 @@ public class ControlPointsController {
             return controlPointsService.getAggregatedControlPointDTO(zoom, mrmsNames,
                     rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude);
         } else {
-            controlPointsService.clearListPointDTO();
+//            controlPointsService.clearListPointDTO();
             return new LinkedList<>();
         }
     }
