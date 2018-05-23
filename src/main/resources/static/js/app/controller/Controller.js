@@ -509,10 +509,7 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                                 console.log("Error Post Control Point Status update.");
                             }
                         });
-            } else {
-                console.log("Response Server Symona have not type(POST_CONTROL_POINT_STATUS, POST_LOCATION, POST_STATUS).");
             }
-
         }
 
         /***********************************************************************************************************
