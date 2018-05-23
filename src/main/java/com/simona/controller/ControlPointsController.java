@@ -84,4 +84,28 @@ public class ControlPointsController {
         }
     }
 
+    @GetMapping("/updateControlPointDetect")
+    public List<PointDTO> updateControlPointDetect(@RequestParam(value = "rightTopLatitude",required=false) Double rightTopLatitude,
+                                                       @RequestParam(value = "rightTopLongitude",required=false ) Double rightTopLongitude,
+                                                       @RequestParam(value = "leftBottomLatitude", required=false) Double leftBottomLatitude,
+                                                       @RequestParam(value = "leftBottomLongitude", required=false) Double leftBottomLongitude,
+                                                       @RequestParam(value = "zoom", required=false) Integer zoom,
+                                                       @RequestParam(value = "mrmsIds", required=false) List<Integer> mrmsNames,
+                                                       @RequestParam(value = "points", required=false) List<Integer> pointsId,
+                                                       @RequestParam(value = "postID", required=false) Integer postID,
+                                                       @RequestParam(value = "type", required=false) String type,
+                                                       @RequestParam(value = "packetID", required=false) Integer packetID) {
+
+        log.info("Update Control Point Detect| " + "{\"points\":[" + pointsId.toString() + "],\"postID\":" + postID + ",\"type\":\"" + type + "\",\"packetID\":" + packetID + "}");
+
+        controlPointsService.updateControlPoint(pointsId, postID, type, packetID);
+
+        if (mrmsNames != null) {
+            return controlPointsService.getActualAggregatedControlPointDTO(zoom, mrmsNames,
+                    rightTopLatitude, rightTopLongitude, leftBottomLatitude, leftBottomLongitude);
+        } else {
+            return new LinkedList<>();
+        }
+    }
+
 }

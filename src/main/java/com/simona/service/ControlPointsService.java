@@ -21,5 +21,7 @@ public interface ControlPointsService {
 
     void updateControlPoint(UpdatePointDTO point, Integer postID, String type, Integer packetID);
 
+    void updateControlPoint(List<Integer> pointsId, Integer postID, String type, Integer packetID);
+
 //    List<StationDTO> getStationDTOs();
 }

@@ -493,6 +493,22 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                                 console.log("Error Post Control Point Status update.");
                             }
                         });
+            } else if (updatedObject.type === "CONTROL_POINT_DETECT") {
+                MonitoringService.updateControlPointDetect($scope.view.zoom, $scope.selectedObject.mrmsIds, updatedObject, rightTopLatitude, rightTopLongtitude, leftBottomLatitude, leftBottomLongtitude)
+                    .then(function success(response) {
+                            showMonitoringObjects(response.data);
+                            // getRegionsWithMonitoringStations();//update info in posts after update control points.
+                            getActualPostsInfo();//update info in posts after update control points.
+                        },
+                        function error(response) {
+                            $scope.message = '';
+                            if (response.status === 404) {
+                                console.log("404 Post Control Point Status update.");
+                            }
+                            else {
+                                console.log("Error Post Control Point Status update.");
+                            }
+                        });
             } else {
                 console.log("Response Server Symona have not type(POST_CONTROL_POINT_STATUS, POST_LOCATION, POST_STATUS).");
             }

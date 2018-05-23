@@ -51,9 +51,27 @@ simonaService.service('MonitoringService', [ '$http', function($http) {
                 packetID: updateObject.packetID
             }
         });
-    }
-
-
+    };
+    this.updateControlPointDetect = function updateControlPointDetect(zoom, mrmsIds, updateObject, rightTopLatitude, rightTopLongitude, leftBottomLatitude, leftBottomLongitude) {
+        return $http({
+            method : 'GET',
+            url : "updateControlPointDetect",
+            params: {
+                rightTopLatitude: rightTopLatitude,
+                rightTopLongitude: rightTopLongitude,
+                leftBottomLatitude: leftBottomLatitude,
+                leftBottomLongitude: leftBottomLongitude,
+                zoom: zoom,
+                mrmsIds: mrmsIds,
+                points: updateObject.points,
+                postID: updateObject.postID,
+                type: updateObject.type,
+                packetID: updateObject.packetID
+            }
+        });
+    };
+    // conn.send("{\"points\":[19452],\"postID\":28,\"type\":\"CONTROL_POINT_DETECT\",\"packetID\":573}");
+    // conn.send("{\"points\":[{\"postStatus\":\"DETECT\",\"pointID\":5931,\"status\":\"MEASUREMENT\"}],\"postID\":28,\"type\":\"POST_CONTROL_POINT_STATUS\",\"packetID\":577}");
 
 
     /*******************************************************************************************************************

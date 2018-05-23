@@ -87,4 +87,18 @@ public class ControlPointsServiceImpl implements ControlPointsService {
         }
     }
 
+    @Override
+    public void updateControlPoint(List<Integer> pointsId, Integer postID, String type, Integer packetID) {
+        for (StationDTO stationDTO : daoService.getStationDTOs()) {
+            for (ControlPointDTO controlPointDTO : stationDTO.getControlPoints()) {
+                for (Integer point : pointsId) {
+                    if (controlPointDTO.getId().equals(point)) {
+                        stationDTO.setUpdated(LocalDateTime.now());
+
+                    }
+                }
+            }
+        }
+    }
+
 }
