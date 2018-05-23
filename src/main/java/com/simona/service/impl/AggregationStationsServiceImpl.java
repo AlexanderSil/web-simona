@@ -272,13 +272,13 @@ public class AggregationStationsServiceImpl implements AggregationStationsServic
                 for (ControlPointDTO controlPointDTO : stationDTO.getControlPoints()) {
                     if (controlPointDTO.getStatus() == null) {// серого цвета - РЭС, подлежащая контролю (не выявлена, не измерена)
                         grey = true;
-                        info = info + "<p class='popupTemplateContentGrey'><b>{MARRIEDRATE} " + stationDTO.getNick_name() + " </b></p>";
+                        info = info + "<p class='popupTemplateContentGrey'><b>{MARRIEDRATE} " + "[" + controlPointDTO.getId() + "] " + stationDTO.getNick_name() + " </b></p>";
                     } else if (controlPointDTO.getStatus() == 1) {// желтого цвета – РЭС выявлена (не измерена)
                         yellow = true;
-                        info = info + "<p class='popupTemplateContentYellow'><b>{MARRIEDRATE} " + stationDTO.getNick_name() + " </b></p>";
+                        info = info + "<p class='popupTemplateContentYellow'><b>{MARRIEDRATE} " + "[" + controlPointDTO.getId() + "] "  + stationDTO.getNick_name() + " </b></p>";
                     } else if (controlPointDTO.getStatus() == 2) {// зеленого цвета – РЭС выявлена и измерена
                         green = true;
-                        info = info + "<p class='popupTemplateContentGreen'><b>{MARRIEDRATE} " + stationDTO.getNick_name() + " </b></p>";
+                        info = info + "<p class='popupTemplateContentGreen'><b>{MARRIEDRATE} " + "[" + controlPointDTO.getId() + "] "  + stationDTO.getNick_name() + " </b></p>";
                     }
                 }
 

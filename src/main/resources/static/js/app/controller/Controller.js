@@ -159,8 +159,8 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                                     posts[u].lastPostTraces.latitude,
                                     posts[u].lastPostTraces.longitude,
                                     posts[u].info);
+                    graphicsLayerPosts.add($scope.post);
                 }
-                graphicsLayerPosts.add($scope.post);
             }
         };
 

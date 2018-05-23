@@ -110,7 +110,7 @@ public class DaoServiceImpl implements DaoService{
     @Scheduled(fixedRate = 10*60*1000)//10 min
     @Transactional
     public void scheduledSelectAllDateFromDB(){
-        log.info("Start scheduled wait when Loaded data from DB.");
+        log.info("Start scheduled Loaded data from DB.");
         //Get List RegionDTO
         List<Region> regionList = daoMock.findAllRegions();
         regionDtos = dtoService.getRegionDTOs(regionList);
@@ -134,6 +134,6 @@ public class DaoServiceImpl implements DaoService{
         postDTOs = dtoService.getPostDTOs(posts);
         waitWhenLoadedPostDTO = false;
 
-        log.info("And scheduled wait When Loaded data from DB.");
+        log.info("And scheduled Loaded data from DB.");
     }
 }
