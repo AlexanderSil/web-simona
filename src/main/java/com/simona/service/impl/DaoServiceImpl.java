@@ -20,9 +20,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -48,7 +46,7 @@ public class DaoServiceImpl implements DaoService{
 
     private List<PostDTO> postDTOs = new LinkedList<>();
 
-    private List<StationDTO> stationDTOs = new LinkedList<>();
+    private Set<StationDTO> stationDTOs = new TreeSet<>();
 
     private List<RserviceDTO> rservicesDTOs = new ArrayList<>();
 
@@ -57,7 +55,7 @@ public class DaoServiceImpl implements DaoService{
     private Boolean waitWhenLoadedRegionDTO = true;
     private Boolean waitWhenLoadedRserviceDTO = true;
 
-    public List<StationDTO> getStationDTOs() {
+    public Set<StationDTO> getStationDTOs() {
         while (waitWhenLoadedStationDTO) {
             try {
                 TimeUnit.SECONDS.sleep(5);

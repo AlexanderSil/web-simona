@@ -9,7 +9,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class StationDTO {
+public class StationDTO implements Comparable {
 
     private Integer id;
     private List<ControlPointDTO> controlPoints;
@@ -35,4 +35,10 @@ public class StationDTO {
     private String perm_remark;
 
     private LocalDateTime updated = null;
+
+    @Override
+    public int compareTo(Object o) {
+        StationDTO stationDTO = (StationDTO)o;
+        return Integer.compare(id, stationDTO.getId());
+    }
 }

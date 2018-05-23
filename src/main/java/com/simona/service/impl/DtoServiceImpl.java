@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Service
 public class DtoServiceImpl implements DtoService {
@@ -17,8 +19,8 @@ public class DtoServiceImpl implements DtoService {
     private MenuServiceImpl monitoringService;
 
     @Override
-    public List<StationDTO> getStationDTOs(Iterable<Station> stations) {
-        List<StationDTO> stationDTOs = new LinkedList<>();
+    public Set<StationDTO> getStationDTOs(Iterable<Station> stations) {
+        Set<StationDTO> stationDTOs = new TreeSet<>();
 
         for (Station station : stations) {
             StationDTO stationDTO = new StationDTO();
@@ -131,7 +133,7 @@ public class DtoServiceImpl implements DtoService {
     }
 
     @Override
-    public List<RserviceDTO> getRserviceDTOs(Iterable<Rservice> rservices, List<StationDTO> stationDTOS) {
+    public List<RserviceDTO> getRserviceDTOs(Iterable<Rservice> rservices, Set<StationDTO> stationDTOS) {
         List<RserviceDTO> rserviceDTOs = new LinkedList<>();
 
         RserviceDTO rserviceDTO = new RserviceDTO();
@@ -261,40 +263,43 @@ public class DtoServiceImpl implements DtoService {
     }
 
 
-    public PointDTO getPointDto(StationDTO stationDTO) {
+    public PointDTO getPointDto(Set<StationDTO> stationDTOs) {
         PointDTO pointDTO = new PointDTO();
 
-        pointDTO.setLongitude(stationDTO.getLongitude());
-        pointDTO.setLatitude(stationDTO.getLatitude());
+        for (StationDTO stationDTO : stationDTOs) {
+            pointDTO.setLongitude(stationDTO.getLongitude());
+            pointDTO.setLatitude(stationDTO.getLatitude());
 
-        String info = "";
-        if (stationDTO.getControlPoints().get(0).getStatus() == null) {// серого цвета - РЭС, подлежащая контролю (не выявлена, не измерена)
-            if (stationDTO.getUpdated() != null && stationDTO.getUpdated().isBefore(LocalDateTime.now().minusMinutes(1))) {
-                pointDTO.setImageName("greyTriangleSelected.png");
-            } else {
-                pointDTO.setImageName("greyTriangle.png");
-                stationDTO.setUpdated(null);
+            String info = "";
+            if (stationDTO.getControlPoints().get(0).getStatus() == null) {// серого цвета - РЭС, подлежащая контролю (не выявлена, не измерена)
+                if (stationDTO.getUpdated() != null && stationDTO.getUpdated().isBefore(LocalDateTime.now().minusMinutes(1))) {
+                    pointDTO.setImageName("greyTriangleSelected.png");
+                } else {
+                    pointDTO.setImageName("greyTriangle.png");
+                    stationDTO.setUpdated(null);
+                }
+                info = info + "<p class='popupTemplateContentGrey'><b>{MARRIEDRATE} "+ stationDTO.getNick_name() +" </b></p>";
+            } else if (stationDTO.getControlPoints().get(0).getStatus() == 1) {// желтого цвета – РЭС выявлена (не измерена)
+                if (stationDTO.getUpdated() != null && stationDTO.getUpdated().isBefore(LocalDateTime.now().minusMinutes(1))) {
+                    pointDTO.setImageName("yellowTriangleSelected.png");
+                } else {
+                    pointDTO.setImageName("yellowTriangle.png");
+                    stationDTO.setUpdated(null);
+                }
+                info = info + "<p class='popupTemplateContentYellow'><b>{MARRIEDRATE} " + stationDTO.getNick_name() +" </b></p>";
+            } else if (stationDTO.getControlPoints().get(0).getStatus() == 2) {// зеленого цвета – РЭС выявлена и измерена
+                if (stationDTO.getUpdated() != null && stationDTO.getUpdated().isBefore(LocalDateTime.now().minusMinutes(1))) {
+                    pointDTO.setImageName("greenTriangleSelected.png");
+                } else {
+                    pointDTO.setImageName("greenTriangle.png");
+                    stationDTO.setUpdated(null);
+                }
+                info = info + "<p class='popupTemplateContentGreen'><b>{MARRIEDRATE} " + stationDTO.getNick_name() +" </b></p>";
             }
-            info = info + "<p class='popupTemplateContentGrey'><b>{MARRIEDRATE} "+ stationDTO.getNick_name() +" </b></p>";
-        } else if (stationDTO.getControlPoints().get(0).getStatus() == 1) {// желтого цвета – РЭС выявлена (не измерена)
-            if (stationDTO.getUpdated() != null && stationDTO.getUpdated().isBefore(LocalDateTime.now().minusMinutes(1))) {
-                pointDTO.setImageName("yellowTriangleSelected.png");
-            } else {
-                pointDTO.setImageName("yellowTriangle.png");
-                stationDTO.setUpdated(null);
-            }
-            info = info + "<p class='popupTemplateContentYellow'><b>{MARRIEDRATE} " + stationDTO.getNick_name() +" </b></p>";
-        } else if (stationDTO.getControlPoints().get(0).getStatus() == 2) {// зеленого цвета – РЭС выявлена и измерена
-            if (stationDTO.getUpdated() != null && stationDTO.getUpdated().isBefore(LocalDateTime.now().minusMinutes(1))) {
-                pointDTO.setImageName("greenTriangleSelected.png");
-            } else {
-                pointDTO.setImageName("greenTriangle.png");
-                stationDTO.setUpdated(null);
-            }
-            info = info + "<p class='popupTemplateContentGreen'><b>{MARRIEDRATE} " + stationDTO.getNick_name() +" </b></p>";
+
+            pointDTO.setInfo(info);
         }
 
-        pointDTO.setInfo(info);
         return pointDTO;
     }
 

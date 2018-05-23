@@ -107,9 +107,9 @@ public class AggregationStationsServiceImpl implements AggregationStationsServic
     @Override
     public List<PointDTO> aggregateStations(Double rightTopLatitude, Double rightTopLongitude,
                                             Double leftBottomLatitude, Double leftBottomLongitude,
-                                            List<StationDTO> stationDTOS, Integer zoom) {
+                                            Set<StationDTO> stationDTOS, Integer zoom) {
 
-        Map<LongLat, List> aggrMap = new HashMap<>();
+        Map<LongLat, Set> aggrMap = new TreeMap<>();
         for (StationDTO station : stationDTOS) {
             if (leftBottomLatitude < station.getLatitude() && station.getLatitude() < rightTopLatitude
                     && leftBottomLongitude < station.getLongitude() && station.getLongitude() < rightTopLongitude) {
@@ -122,51 +122,67 @@ public class AggregationStationsServiceImpl implements AggregationStationsServic
                         if (zoom == 21 && AggregationHelper.distance(station, longLat, "K") <= 0.005) {//change to lower distance //0.0045011109739724245
                             aggrMap.get(longLat).add(station);
                             aggregated = true;
+                            break;
                         } else if (zoom == 20 && AggregationHelper.distance(station, longLat, "K") <= 0.01) {//change to lower distance //0.009400531899557338
                             aggrMap.get(longLat).add(station);
                             aggregated = true;
+                            break;
                         } else if (zoom == 19 && AggregationHelper.distance(station, longLat, "K") <= 0.02) {//change to lower distance //0.01632482771763881
                             aggrMap.get(longLat).add(station);
                             aggregated = true;
+                            break;
                         } else if (zoom == 18 && AggregationHelper.distance(station, longLat, "K") <= 0.04) {//change to lower distance //0.03223491895414472
                             aggrMap.get(longLat).add(station);
                             aggregated = true;
-                        } else if (zoom == 17 && AggregationHelper.distance(station, longLat, "K") <= 0.07) {//change to lower distance //0.06856566195963213
+                            break;
+                        } else if (zoom == 17 && AggregationHelper.distance(station, longLat, "K") <= 0.05) {//change to lower distance //0.06856566195963213
                             aggrMap.get(longLat).add(station);
                             aggregated = true;
-                        } else if (zoom == 16 && AggregationHelper.distance(station, longLat, "K") <= 0.08) {//change to lower distance //0.0701160466652148
+                            break;
+                        } else if (zoom == 16 && AggregationHelper.distance(station, longLat, "K") <= 0.07) {//change to lower distance //0.0701160466652148
                             aggrMap.get(longLat).add(station);
                             aggregated = true;
+                            break;
                         } else if (zoom == 15 && AggregationHelper.distance(station, longLat, "K") <= 0.15) {//change to lower distance //0.1377618234489109
                             aggrMap.get(longLat).add(station);
                             aggregated = true;
+                            break;
                         } else if (zoom == 14 && AggregationHelper.distance(station, longLat, "K") <= 0.25) {//0.20088793859573414 !
                             aggrMap.get(longLat).add(station);
                             aggregated = true;
+                            break;
                         } else if (zoom == 13 && AggregationHelper.distance(station, longLat, "K") <= 0.7) {//change to higher distance //0.5784220345040679
                             aggrMap.get(longLat).add(station);
                             aggregated = true;
+                            break;
                         } else if (zoom == 12 && AggregationHelper.distance(station, longLat, "K") <= 1.2) {//change to higher distance //1.1375660772017505
                             aggrMap.get(longLat).add(station);
                             aggregated = true;
-                        } else if (zoom == 11 && AggregationHelper.distance(station, longLat, "K") <= 2.3) {//change to higher distance //2.2913646610699744
+                            break;
+                        } else if (zoom == 11 && AggregationHelper.distance(station, longLat, "K") <= 2.0) {//change to higher distance //2.2913646610699744
                             aggrMap.get(longLat).add(station);
                             aggregated = true;
+                            break;
                         } else if (zoom == 10 && AggregationHelper.distance(station, longLat, "K") <= 4.5) {//change to higher distance //4.542713975147452
                             aggrMap.get(longLat).add(station);
                             aggregated = true;
+                            break;
                         } else if (zoom == 9 && AggregationHelper.distance(station, longLat, "K") <= 8.0) {//change to higher distance //8.59961892760351
                             aggrMap.get(longLat).add(station);
                             aggregated = true;
+                            break;
                         } else if (zoom == 8 && AggregationHelper.distance(station, longLat, "K") <= 18.0) {//change to higher distance //17.843863090989773
                             aggrMap.get(longLat).add(station);
                             aggregated = true;
+                            break;
                         } else if (zoom == 7 && AggregationHelper.distance(station, longLat, "K") <= 37.0) {//change to higher distance //36.84453815479292
                             aggrMap.get(longLat).add(station);
                             aggregated = true;
+                            break;
                         } else if (zoom == 6 && AggregationHelper.distance(station, longLat, "K") <= 72.0) {//change to higher distance //71.29392669091827
                             aggrMap.get(longLat).add(station);
                             aggregated = true;
+                            break;
                         }
                     }
 
@@ -179,10 +195,9 @@ public class AggregationStationsServiceImpl implements AggregationStationsServic
 
         List<PointDTO> pointDTOS = new LinkedList<>();
         for (LongLat longLat : aggrMap.keySet()) {
-            List<StationDTO> stationListDTO = aggrMap.get(longLat);
+            Set<StationDTO> stationListDTO = aggrMap.get(longLat);
             pointDTOS.add(createPointDTOFromStationDTOs(stationListDTO, longLat));
         }
-
 
         return pointDTOS;
     }
@@ -247,7 +262,7 @@ public class AggregationStationsServiceImpl implements AggregationStationsServic
 //        return pointDTO;
 //    }
 
-    private PointDTO createPointDTOFromStationDTOs(List<StationDTO> stationListDTO, LongLat longLat) {
+    private PointDTO createPointDTOFromStationDTOs(Set<StationDTO> stationListDTO, LongLat longLat) {
         PointDTO pointDTO = new PointDTO();
 
 //        LongLat longLat = new LongLat(); todo for calculate average longLat
@@ -256,8 +271,15 @@ public class AggregationStationsServiceImpl implements AggregationStationsServic
         boolean green = false;
         boolean yellow = false;
 
-        if (stationListDTO.size() == 1 && stationListDTO.get(0).getControlPoints().size() == 1) {
-            pointDTO = dtoService.getPointDto(stationListDTO.get(0));
+        int sizeControlPoint = 0;
+        if (stationListDTO.size() == 1) {
+            for (StationDTO stationDTO : stationListDTO) {
+                sizeControlPoint = sizeControlPoint + stationDTO.getControlPoints().size();
+            }
+        }
+
+        if (stationListDTO.size() == 1 && sizeControlPoint == 1) {
+            pointDTO = dtoService.getPointDto(stationListDTO);
         } else {
             boolean selected = false;
             for (StationDTO stationDTO : stationListDTO) {
@@ -342,19 +364,11 @@ public class AggregationStationsServiceImpl implements AggregationStationsServic
         return pointDTO;
     }
 
-    private void addToAggrMap(Map<LongLat, List> myMap, Station station) {
+    private void addToAggrMap(Map<LongLat, Set> myMap, StationDTO station) {
         LongLat longLat = new LongLat();
         longLat.setLatitude(station.getLatitude());
         longLat.setLongitude(station.getLongitude());
-        List<Station> stations = new LinkedList<>();
-        stations.add(station);
-        myMap.put(longLat, stations);
-    }
-    private void addToAggrMap(Map<LongLat, List> myMap, StationDTO station) {
-        LongLat longLat = new LongLat();
-        longLat.setLatitude(station.getLatitude());
-        longLat.setLongitude(station.getLongitude());
-        List<StationDTO> stations = new LinkedList<>();
+        Set<StationDTO> stations = new TreeSet<>();
         stations.add(station);
         myMap.put(longLat, stations);
     }

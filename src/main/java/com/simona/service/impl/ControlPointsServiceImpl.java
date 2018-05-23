@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ControlPointsServiceImpl implements ControlPointsService {
@@ -33,7 +34,7 @@ public class ControlPointsServiceImpl implements ControlPointsService {
                                                        Double rightTopLatitude, Double rightTopLongitude,
                                                        Double leftBottomLatitude, Double leftBottomLongitude) {
 
-        List<StationDTO> stationDTOs = daoService.getStationDTOs();
+        Set<StationDTO> stationDTOs = daoService.getStationDTOs();
 
         List<PointDTO> controlPointDTOs = new LinkedList<>();
         controlPointDTOs.addAll(aggregationStationsService.aggregateStations(rightTopLatitude, rightTopLongitude,

@@ -4,10 +4,11 @@ import com.simona.model.*;
 import com.simona.model.dto.*;
 
 import java.util.List;
+import java.util.Set;
 
 public interface DtoService {
 
-    List<RserviceDTO> getRserviceDTOs(Iterable<Rservice> rservices, List<StationDTO> stationDTOS);
+    List<RserviceDTO> getRserviceDTOs(Iterable<Rservice> rservices, Set<StationDTO> stationDTOS);
 
     PostDTOTemp getPostDTOTemp(PostDTO post);
 
@@ -15,11 +16,11 @@ public interface DtoService {
 
     PointDTO getPointDto(ControlPoint controlPoint);
 
-    PointDTO getPointDto(StationDTO stationDTO);
+    PointDTO getPointDto(Set<StationDTO> stationDTOS);
 
     PointDTO getPointsDTOFromPosts(PostTraces postTraces);
 
-    List<StationDTO> getStationDTOs(Iterable<Station> stations);
+    Set<StationDTO> getStationDTOs(Iterable<Station> stations);
 
     List<PostDTO> getPostDTOs(Iterable<Post> posts);
 
