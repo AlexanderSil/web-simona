@@ -1,5 +1,6 @@
 package com.simona.model.dto;
 
+import com.simona.model.LongLat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -40,5 +41,30 @@ public class StationDTO implements Comparable {
     public int compareTo(Object o) {
         StationDTO stationDTO = (StationDTO)o;
         return Integer.compare(id, stationDTO.getId());
+    }
+
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + latitude.hashCode();
+        result = 31 * result + longitude.hashCode();
+        result = 31 * result + id;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (!(o instanceof StationDTO)) {
+            return false;
+        }
+
+        StationDTO stationDTO = (StationDTO) o;
+
+        int result1 = Double.compare(latitude, stationDTO.getLatitude());
+        int result2 = Double.compare(longitude, stationDTO.getLongitude());
+
+        return result1 == 0 && result2 == 0 && id.equals(stationDTO.getId());
     }
 }
