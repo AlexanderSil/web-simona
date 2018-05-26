@@ -1,8 +1,6 @@
 package com.simona.service.impl;
 
-import com.simona.model.*;
 import com.simona.model.dto.*;
-//import com.simona.service.AggregationControlPointsService;
 import com.simona.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +79,22 @@ public class MenuServiceImpl implements MenuService {
                     if (rserviceDTO.getName().equals("Всего:")) {
                         rserviceDTO.setDetectedcount(rserviceDTO.getDetectedcount() + detect);
                         rserviceDTO.setMeasuredcount(rserviceDTO.getMeasuredcount() + measurement);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void updatePostInfoUnidentifiedCount(List<UnidentifiedStationDTO> unidentifiedStationDTOs) {
+        for (UnidentifiedStationDTO unidentifiedStationDTO : unidentifiedStationDTOs) {
+            for (RegionDTO regionDto : daoService.getRegionDTOs()) {
+                for (PostDTOTemp postDTOTemp : regionDto.getPostDTOTemps()) {
+                    for (RserviceDTO rserviceDTO : postDTOTemp.getRserviceDTOs()) {
+                        if (rserviceDTO.getId().equals(unidentifiedStationDTO.getRservice())
+                                || rserviceDTO.getId().equals(0)) {
+                            rserviceDTO.setUnidentifiedcount(rserviceDTO.getUnidentifiedcount() + unidentifiedStationDTO.getCount());
+                        }
                     }
                 }
             }

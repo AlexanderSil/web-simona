@@ -109,6 +109,11 @@ public class DaoServiceImpl implements DaoService{
     @Transactional
     public void scheduledSelectAllDateFromDB(){
         log.info("Start scheduled Loaded data from DB.");
+        waitWhenLoadedStationDTO = true;
+        waitWhenLoadedPostDTO = true;
+        waitWhenLoadedRegionDTO = true;
+        waitWhenLoadedRserviceDTO = true;
+
         //Get List RegionDTO
         List<Region> regionList = daoMock.findAllRegions();
         regionDtos = dtoService.getRegionDTOs(regionList);
@@ -132,6 +137,6 @@ public class DaoServiceImpl implements DaoService{
         postDTOs = dtoService.getPostDTOs(posts);
         waitWhenLoadedPostDTO = false;
 
-        log.info("And scheduled Loaded data from DB.");
+        log.info("End scheduled Loaded data from DB.");
     }
 }

@@ -325,7 +325,7 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                 function error(response) {
                     $scope.message = '';
                     if (response.status === 404) {
-                        console.log("BaseStation not found!");
+                        console.log("BaseStation not found! Server unavailable. Error 404.");
                     }
                     else {
                         console.log("Error getting BaseStation!");
@@ -401,6 +401,7 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                                 if (rserviceDTO.name == newRserviceDTO.name) {
                                     rserviceDTO.detectedcount = newRserviceDTO.detectedcount;
                                     rserviceDTO.measuredcount = newRserviceDTO.measuredcount;
+                                    rserviceDTO.unidentifiedcount = newRserviceDTO.unidentifiedcount;
                                 }
                             });
                         }
@@ -507,6 +508,20 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                             }
                             else {
                                 console.log("Error Post Control Point Status update.");
+                            }
+                        });
+            } else if (updatedObject.type === "ILS") {
+                MonitoringService.updateUnidentifiedCount(updatedObject)
+                    .then(function success(response) {
+                            getActualPostsInfo();//update info in posts after update control points.
+                        },
+                        function error(response) {
+                            $scope.message = '';
+                            if (response.status === 404) {
+                                console.log("404 unidentified station update.");
+                            }
+                            else {
+                                console.log("Error unidentified station update.");
                             }
                         });
             }

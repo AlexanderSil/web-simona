@@ -16,7 +16,7 @@
     <div class="container container-fluid h-100 d-flex flex-col">
         <div style="width: 100%;" class="grid">
             <div class="row h-100">
-                <div class="col-sm-3">
+                <div class="col-sm-4">
                     <!--<div ng-include='"partials/header.html"'></div>-->
 
 
@@ -46,26 +46,29 @@
                                             <div style="width: 100%;" class="grid">
                                                 <div ng-repeat="detected in mrms.rserviceDTOs">
                                                     <div class="row h-100">
-                                                        <div class="col-sm-10">
+                                                        <div class="col-sm-8">
                                                             <strong>{{detected.name}}</strong>
                                                         </div>
-                                                        <div class="col-sm-2">
+                                                        <div class="col-sm-4" ng-if="detected.unidentifiedcount == 0">
                                                             <strong>{{detected.count}}</strong>
+                                                        </div>
+                                                        <div class="col-sm-4" ng-if="detected.unidentifiedcount != 0">
+                                                            <strong>{{detected.count}}({{detected.unidentifiedcount}})</strong>
                                                         </div>
                                                     </div>
                                                     <div class="row h-100">
-                                                        <div class="col-sm-10" style="padding-left: 50px;">
+                                                        <div class="col-sm-8" style="padding-left: 50px;">
                                                             {{detected.detected}}
                                                         </div>
-                                                        <div class="col-sm-2">
+                                                        <div class="col-sm-4">
                                                             {{detected.detectedcount}}
                                                         </div>
                                                     </div>
                                                     <div class="row h-100">
-                                                        <div class="col-sm-10" style="padding-left: 50px;">
+                                                        <div class="col-sm-8" style="padding-left: 50px;">
                                                             {{detected.measured}}
                                                         </div>
-                                                        <div class="col-sm-2">
+                                                        <div class="col-sm-4">
                                                             {{detected.measuredcount}}
                                                         </div>
                                                     </div>
@@ -81,7 +84,7 @@
                     </div>
                     <div ng-view class="angular-view"></div>
                 </div>
-                <div class="col-sm-9 map">
+                <div class="col-sm-8 map">
                     <div id="mapDiv"></div>
                 </div>
             </div>

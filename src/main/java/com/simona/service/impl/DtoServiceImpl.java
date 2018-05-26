@@ -35,6 +35,7 @@ public class DtoServiceImpl implements DtoService {
                 controlPointDTO.setStn_sys_id(controlPoint.getStn_sys_id());
                 controlPointDTO.setFreq(controlPoint.getFreq());
                 controlPointDTO.setStatus(controlPoint.getStatus());
+                controlPointDTO.setStn_sys_id(controlPoint.getStn_sys_id());
                 controlPoints.add(controlPointDTO);
             }
             stationDTO.setControlPoints(controlPoints);
@@ -115,17 +116,38 @@ public class DtoServiceImpl implements DtoService {
                 }
             }
 
+//            if (postTracesDTO != null) {
+//                postDTO.setLastPostTraces(postTracesDTO);
+//
+//                postDTO.setImageName(getImageNameForPost(postTracesDTO.getDirection()));
+//                postDTO.setInfo("Пост ID: " + post.getId()
+//                        + (postTracesDTO.getSpeed() != null ? ". Скорость: " + postTracesDTO.getSpeed().toString() + "km/h" : "")
+//                        + ". Long: " + postTracesDTO.getLongitude() + "; Lat: " + postTracesDTO.getLatitude());
+//            } else {
+//                postDTO.setLastPostTraces(new PostTracesDTO());
+//            }
+//            postDTOS.add(postDTO);
+
+
             if (postTracesDTO != null) {
                 postDTO.setLastPostTraces(postTracesDTO);
 
-                postDTO.setImageName(getImageNameForPost(postTracesDTO.getDirection()));
-                postDTO.setInfo("Пост ID: " + post.getId()
-                        + (postTracesDTO.getSpeed() != null ? ". Скорость: " + postTracesDTO.getSpeed().toString() + "km/h" : "")
-                        + ". Long: " + postTracesDTO.getLongitude() + "; Lat: " + postTracesDTO.getLatitude());
             } else {
-                postDTO.setLastPostTraces(new PostTracesDTO());
+                postTracesDTO = new PostTracesDTO();
+                postTracesDTO.setId(1);
+                postTracesDTO.setTimestamp(LocalDateTime.now());
+                postTracesDTO.setLatitude(0.1);
+                postTracesDTO.setLongitude(0.1);
+                postTracesDTO.setSpeed(0);
+                postTracesDTO.setDirection(0.0);
+                postDTO.setLastPostTraces(postTracesDTO);
             }
+            postDTO.setImageName(getImageNameForPost(postTracesDTO.getDirection()));
+            postDTO.setInfo("Пост ID: " + post.getId()
+                    + (postTracesDTO.getSpeed() != null ? ". Скорость: " + postTracesDTO.getSpeed().toString() + "km/h" : "")
+                    + ". Long: " + postTracesDTO.getLongitude() + "; Lat: " + postTracesDTO.getLatitude());
             postDTOS.add(postDTO);
+
         }
 
 
@@ -136,11 +158,10 @@ public class DtoServiceImpl implements DtoService {
     public List<RserviceDTO> getRserviceDTOs(Iterable<Rservice> rservices, Set<StationDTO> stationDTOS) {
         List<RserviceDTO> rserviceDTOs = new LinkedList<>();
 
-        RserviceDTO rserviceDTO = new RserviceDTO();
-        rserviceDTO.setName("Всего:");
         Integer size = 0;
         Integer detect = 0;
         Integer measurement = 0;
+        Integer unidentifiedStations = 0;
         for (StationDTO stationDTO : stationDTOS) {
             size = size + stationDTO.getControlPoints().size();
 
@@ -151,23 +172,21 @@ public class DtoServiceImpl implements DtoService {
                     } else if (controlPoint.getStatus() == 2) {// зеленого цвета – РЭС выявлена и измерена (Измерено, MEASUREMENT)
                         measurement = measurement +1;
                     }
+                    if (controlPoint.getStn_sys_id() != null) {
+                        if (controlPoint.getStn_sys_id() == 0) {// неидентифицированная станция
+                            unidentifiedStations = unidentifiedStations + 1;
+                        }
+                    }
                 }
             }
         }
+        RserviceDTO rserviceDTO = new RserviceDTO();
+        rserviceDTO.setId(0);
+        rserviceDTO.setName("Всего:");
         rserviceDTO.setCount(size);
-
-//        Integer detect = 0;
-//        Integer measurement = 0;
-//        for (ControlPoint controlPoint : controlPoints) {
-//            if (controlPoint.getStatus() != null) {
-//                if (controlPoint.getStatus() == 1) {// желтого цвета – РЭС выявлена (Обнаружено, DETECT)
-//                    detect = detect + 1;
-//                } else if (controlPoint.getStatus() == 2) {// зеленого цвета – РЭС выявлена и измерена (Измерено, MEASUREMENT)
-//                    measurement = measurement +1;
-//                }
-//            }
-//        }
-
+        if (unidentifiedStations > 0) {
+            rserviceDTO.setUnidentifiedcount(unidentifiedStations);
+        }
         rserviceDTO.setDetected("Обнаружено:");
         rserviceDTO.setDetectedcount(detect);
         rserviceDTO.setMeasured("Измерено:");
@@ -178,11 +197,11 @@ public class DtoServiceImpl implements DtoService {
         for (Rservice rservice : rservices) {
             if (rservice.getStations().size() >= 1) {
                 rserviceDTO = new RserviceDTO();
-
+                rserviceDTO.setId(rservice.getRserviceTypes().getId());
                 rserviceDTO.setName(rservice.getRserviceTypes().getName());
                 rserviceDTO.setDetected("Обнаружено:");
                 rserviceDTO.setMeasured("Измерено:");
-
+                unidentifiedStations = 0;
                 for (Station station: rservice.getStations()) {
                     for (ControlPoint controlPoint : station.getControlPoints()) {
                         if (controlPoint.getStatus() != null) {
@@ -191,9 +210,17 @@ public class DtoServiceImpl implements DtoService {
                             } else if (controlPoint.getStatus() == 2) {// зеленого цвета – РЭС выявлена и измерена (Измерено, MEASUREMENT)
                                 rserviceDTO.setMeasuredcount(rserviceDTO.getMeasuredcount() + 1);
                             }
+                            if (controlPoint.getStn_sys_id() != null) {
+                                if (controlPoint.getStn_sys_id() == 0) {// неидентифицированная станция
+                                    unidentifiedStations = unidentifiedStations + 1;
+                                }
+                            }
                         }
                     }
                     rserviceDTO.setCount(rserviceDTO.getCount() + station.getControlPoints().size());
+                }
+                if (unidentifiedStations > 0) {
+                    rserviceDTO.setUnidentifiedcount(unidentifiedStations);
                 }
 
                 rserviceDTOs.add(rserviceDTO);

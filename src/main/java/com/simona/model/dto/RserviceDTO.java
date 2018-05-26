@@ -16,8 +16,10 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 public class RserviceDTO {
 
+    private Integer id;
     private String name;
     private Integer count = 0;
+    private Integer unidentifiedcount = 0;
     private String detected;//обнаружено
     private Integer detectedcount = 0;
     private String measured;//измерено

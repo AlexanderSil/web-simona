@@ -13,4 +13,6 @@ public interface MenuService {
     List<RegionDTO> getActualRegions();
 
     void updatePostInfo(UpdatePointDTO newPoint, ControlPointDTO oldControlPointDTO, StationRserviceDTO rservice);
+
+    void updatePostInfoUnidentifiedCount(List<UnidentifiedStationDTO> unidentifiedStationDTO);
 }

@@ -119,7 +119,7 @@ simonaService.service('MonitoringService', [ '$http', function($http) {
 
 
     /*******************************************************************************************************************
-     * Regions Info
+     * Regions Menu Info
      *******************************************************************************************************************/
     this.getRegions = function getRegions() {
         return $http({
@@ -155,6 +155,15 @@ simonaService.service('MonitoringService', [ '$http', function($http) {
                 postID: updatedObject.postID,
                 type: updatedObject.type,
                 packetID: updatedObject.packetID
+            }
+        });
+    };
+    this.updateUnidentifiedCount = function update(updatedObject) {
+        return $http({
+            method : 'GET',
+            url : "updateUnidentifiedCount",
+            params: {
+                unidentified: updatedObject.data
             }
         });
     };

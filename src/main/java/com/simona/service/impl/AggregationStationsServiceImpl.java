@@ -36,23 +36,23 @@ public class AggregationStationsServiceImpl implements AggregationStationsServic
         }
         log.info("Zoom : " + zoom);
         log.info("Count control point with status = 1 (before aggregation) : " + count);
-
+        */
 
         Integer shouldCount = 0;
-        */
+
 
         Map<LongLat, Set> aggrMap = new HashMap<>();
         for (StationDTO station : stationDTOS) {
             if (leftBottomLatitude < station.getLatitude() && station.getLatitude() < rightTopLatitude
                     && leftBottomLongitude < station.getLongitude() && station.getLongitude() < rightTopLongitude) {
 
-                /* For check
+                // For check
                 for (ControlPointDTO controlPointDTO : station.getControlPoints()) {
                     if (controlPointDTO.getStatus() != null && controlPointDTO.getStatus().equals(1)) {
                         shouldCount = shouldCount + 1;
                     }
                 }
-                 */
+
 
                 if (aggrMap.isEmpty()) {
                     addToAggrMap(aggrMap, station);
@@ -133,7 +133,7 @@ public class AggregationStationsServiceImpl implements AggregationStationsServic
                 }
             }
         }
-        /* For check
+        // For check
         log.info("Count control point with status = 1 (Should be) : " + shouldCount);
         Integer countYelow = 0;
         for (LongLat longLat : aggrMap.keySet()) {
@@ -148,7 +148,7 @@ public class AggregationStationsServiceImpl implements AggregationStationsServic
         }
 
         log.info("Count control point with status = 1 (after aggregation) : " + countYelow);
-        */
+
 
         List<PointDTO> pointDTOS = new LinkedList<>();
         for (LongLat longLat : aggrMap.keySet()) {
