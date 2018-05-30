@@ -172,10 +172,10 @@ public class DtoServiceImpl implements DtoService {
                     } else if (controlPoint.getStatus() == 2) {// зеленого цвета – РЭС выявлена и измерена (Измерено, MEASUREMENT)
                         measurement = measurement +1;
                     }
-                    if (controlPoint.getStn_sys_id() != null) {
-                        if (controlPoint.getStn_sys_id() == 0) {// неидентифицированная станция
-                            unidentifiedStations = unidentifiedStations + 1;
-                        }
+                }
+                if (controlPoint.getStn_sys_id() != null) {
+                    if (controlPoint.getStn_sys_id() == 0) {// неидентифицированная станция
+                        unidentifiedStations = unidentifiedStations + 1;
                     }
                 }
             }
@@ -183,7 +183,7 @@ public class DtoServiceImpl implements DtoService {
         RserviceDTO rserviceDTO = new RserviceDTO();
         rserviceDTO.setId(0);
         rserviceDTO.setName("Всего:");
-        rserviceDTO.setCount(size);
+        rserviceDTO.setCount(size - unidentifiedStations);
         if (unidentifiedStations > 0) {
             rserviceDTO.setUnidentifiedcount(unidentifiedStations);
         }
@@ -210,10 +210,10 @@ public class DtoServiceImpl implements DtoService {
                             } else if (controlPoint.getStatus() == 2) {// зеленого цвета – РЭС выявлена и измерена (Измерено, MEASUREMENT)
                                 rserviceDTO.setMeasuredcount(rserviceDTO.getMeasuredcount() + 1);
                             }
-                            if (controlPoint.getStn_sys_id() != null) {
-                                if (controlPoint.getStn_sys_id() == 0) {// неидентифицированная станция
-                                    unidentifiedStations = unidentifiedStations + 1;
-                                }
+                        }
+                        if (controlPoint.getStn_sys_id() != null) {
+                            if (controlPoint.getStn_sys_id() == 0) {// неидентифицированная станция
+                                unidentifiedStations = unidentifiedStations + 1;
                             }
                         }
                     }
