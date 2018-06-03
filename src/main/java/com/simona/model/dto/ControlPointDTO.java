@@ -9,6 +9,6 @@ public class ControlPointDTO {
     private Integer id;
 //    private Station station;
     private Integer stn_sys_id;
-    private Integer freq;
+    private Double freq;
     private Integer status;
 }

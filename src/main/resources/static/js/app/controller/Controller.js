@@ -291,7 +291,7 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
             $scope.loadDataFromDB();//get data from data base.
             if ($scope.selectedObject.mrmsIds.length != 0) {
                 subscribePostServerSymonaWebSocket();
-                sendToSocket({func: "SUBSC_CONTROL_POINT"});//subscribe to all control points
+                //sendToSocket({func: "SUBSC_CONTROL_POINT"});//subscribe to all control points
             } else {
                 getRegionsWithMonitoringStations();
             }

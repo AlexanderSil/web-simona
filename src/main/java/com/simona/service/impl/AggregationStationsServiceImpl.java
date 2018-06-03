@@ -162,8 +162,7 @@ public class AggregationStationsServiceImpl implements AggregationStationsServic
     private PointDTO createPointDTOFromStationDTOs(Set<StationDTO> stationListDTO, LongLat longLat) {
         PointDTO pointDTO = new PointDTO();
 
-//        LongLat longLat = new LongLat(); todo for calculate average longLat
-        String info = "";
+        String info = "<ul class=\"ul-treefree ul-dropfree\">";
         boolean grey = false;
         boolean green = false;
         boolean yellow = false;
@@ -180,25 +179,53 @@ public class AggregationStationsServiceImpl implements AggregationStationsServic
         } else {
             boolean selected = false;
             for (StationDTO stationDTO : stationListDTO) {
-                //calculate long lat todo for calculate average longLat
-//            if (longLat.getLongitude() == null) { todo for calculate average longLat
-//                longLat.setLatitude(station.getLatitude()); todo for calculate average longLat
-//                longLat.setLongitude(station.getLongitude()); todo for calculate average longLat
-//            } else {
-//                longLat.setLatitude(longLat.getLatitude() + station.getLatitude()); todo for calculate average longLat
-//                longLat.setLongitude(longLat.getLongitude() + station.getLongitude()); todo for calculate average longLat
-//            }
-                for (ControlPointDTO controlPointDTO : stationDTO.getControlPoints()) {
-                    if (controlPointDTO.getStatus() == null) {// серого цвета - РЭС, подлежащая контролю (не выявлена, не измерена)
+
+                if (stationDTO.getControlPoints().size() == 1) { //Станции, у которых единица контроля  - станция (для единицы контроля не записана частота), записывать строку кода РМ с соответствующим цветом, в зависимости статуса – черный (не обнаружена), темно-желтый (обнаружена) или зеленый (измерена).
+                    if (stationDTO.getControlPoints().get(0).getStatus() == null) {// серого цвета - РЭС, подлежащая контролю (не выявлена, не измерена)
                         grey = true;
-                        info = info + "<p class='popupTemplateContentGrey'><b>{MARRIEDRATE} " + "[" + controlPointDTO.getId() + "] " + stationDTO.getNick_name() + " </b></p>";
-                    } else if (controlPointDTO.getStatus() == 1) {// желтого цвета – РЭС выявлена (не измерена)
+                        info = info + "<li class='popupTemplateContentGrey'>" + stationDTO.getNick_name() + "</li>";
+                    } else if (stationDTO.getControlPoints().get(0).getStatus() == 1) {// желтого цвета – РЭС выявлена (не измерена)
                         yellow = true;
-                        info = info + "<p class='popupTemplateContentYellow'><b>{MARRIEDRATE} " + "[" + controlPointDTO.getId() + "] "  + stationDTO.getNick_name() + " </b></p>";
-                    } else if (controlPointDTO.getStatus() == 2) {// зеленого цвета – РЭС выявлена и измерена
+                        info = info + "<li class='popupTemplateContentYellow'>" + stationDTO.getNick_name() + "</li>";
+                    } else if (stationDTO.getControlPoints().get(0).getStatus() == 2) {// зеленого цвета – РЭС выявлена и измерена
                         green = true;
-                        info = info + "<p class='popupTemplateContentGreen'><b>{MARRIEDRATE} " + "[" + controlPointDTO.getId() + "] "  + stationDTO.getNick_name() + " </b></p>";
+                        info = info + "<li class='popupTemplateContentGreen'>" + stationDTO.getNick_name() + "</li>";
                     }
+                } else {
+
+                    int greyOption = 0;
+                    int yellowOption = 0;
+                    int greenOption = 0;
+                    String optionsInfo = "<ul>";
+
+                    for (ControlPointDTO controlPointDTO : stationDTO.getControlPoints()) { //Для станций, у которых единица контроля  - частота (для единицы контроля записана частота), записывать строку кода РМ, группируя частоты станции в раскрывающийся список частот. Справа от строки с кодом РМ в скобках обозначать количества не обнаруженных, обнаруженных и измеренных (если их количество не равно 0). Подсвечивать соответствующим цветом количество для каждого статуса. При раскрытии списка частот, выводить частоты в списке цветом, соответствующим их статусу.
+
+                        if (controlPointDTO.getStatus() == null) {// серого цвета - РЭС, подлежащая контролю (не выявлена, не измерена)
+                            grey = true;
+                            greyOption = greyOption + 1;
+                            if (controlPointDTO.getFreq() != null)
+                                optionsInfo = optionsInfo + "<li  class='popupTemplateContentGrey' >" + controlPointDTO.getFreq() + " МГц</li>";
+                        } else if (controlPointDTO.getStatus() == 1) {// желтого цвета – РЭС выявлена (не измерена)
+                            yellow = true;
+                            yellowOption = yellowOption + 1;
+                            if (controlPointDTO.getFreq() != null)
+                                optionsInfo = optionsInfo + "<li  class='popupTemplateContentYellow' >" + controlPointDTO.getFreq() + " МГц</li>";
+                        } else if (controlPointDTO.getStatus() == 2) {// зеленого цвета – РЭС выявлена и измерена
+                            green = true;
+                            greenOption = greenOption + 1;
+                            if (controlPointDTO.getFreq() != null)
+                                optionsInfo = optionsInfo + "<li  class='popupTemplateContentGreen' >" + controlPointDTO.getFreq() + " МГц</li>";
+                        }
+                    }
+
+                    optionsInfo = optionsInfo + "</ul>";
+                    info = info + "<li class='popupTemplateContentGrey'>"
+                            + stationDTO.getNick_name() + (greyOption > 0?" <font color=\"grey\">(" + greyOption + ")</font>":"")
+                            + (yellowOption > 0?" <font color=\"#d2c200\">(" + yellowOption + ")</font>":"") + (greenOption > 0?" <font color=\"lawngreen\">(" + greenOption + ")</font>":"")
+
+
+                            + optionsInfo + "</li>";
+
                 }
 
                 if (stationDTO.getUpdated() != null && LocalDateTime.now().minusMinutes(1).isBefore(stationDTO.getUpdated())) {
@@ -208,6 +235,7 @@ public class AggregationStationsServiceImpl implements AggregationStationsServic
                 }
             }
 
+            info = info + "</ul>";
             pointDTO.setInfo(info);
             if (grey && green && yellow) {
                 if (selected) {
@@ -253,8 +281,6 @@ public class AggregationStationsServiceImpl implements AggregationStationsServic
                 }
             }
 
-//        pointDTO.setLatitude(longLat.getLatitude()/stationList.size()); todo for calculate average longLat
-//        pointDTO.setLongitude(longLat.getLongitude()/stationList.size()); todo for calculate average longLat
             pointDTO.setLatitude(longLat.getLatitude());
             pointDTO.setLongitude(longLat.getLongitude());
         }

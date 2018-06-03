@@ -15,8 +15,4 @@ public interface AggregationStationsService {
     List<PointDTO> aggregateStations (Double rightTopLatitude, Double rightTopLongitude,
                                       Double leftBottomLatitude, Double leftBottomLongitude,
                                       Set<StationDTO> stationDTOS, Integer zoom);
-
-//    List<PointDTO> aggregateStations (Double rightTopLatitude, Double rightTopLongitude,
-//                                      Double leftBottomLatitude, Double leftBottomLongitude,
-//                                      Iterable<Station> stations, Integer zoom);
 }
