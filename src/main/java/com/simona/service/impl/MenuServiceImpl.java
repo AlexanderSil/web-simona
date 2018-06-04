@@ -32,12 +32,13 @@ public class MenuServiceImpl implements MenuService {
             PostDTOTemp postDTOTemp = new PostDTOTemp();
             postDTOTemp = dtoService.getPostDTOTemp(post);
             postDTOTemp.setRserviceDTOs(daoService.getRserviceDTOs());
+            postDTOTemp.setState(post.getState());
             postDTOTemps.add(postDTOTemp);
         }
         for (RegionDTO regionDto : regionDTOs) {
             regionDto.setPostDTOTemps(postDTOTemps);
         }
-
+        daoService.setRegionDTOs(regionDTOs);
         return regionDTOs;
     }
 
@@ -104,16 +105,18 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public void updatePostStatus(Integer postID, String status) {
-        for (RegionDTO regionDto : daoService.getRegionDTOs()) {
-            for (PostDTOTemp postDTOTemp : regionDto.getPostDTOTemps()) {
-                if (postDTOTemp.getId().equals(postID)) {
-                    if ("OFFLINE".equals(status)) {
-                        postDTOTemp.setState(1);
-                    } else if ("ONLINE".equals(status)) {
-                        postDTOTemp.setState(0);
-                    }
+        List<PostDTO> postDTOs = daoService.getPostDTOs();
+
+        for (PostDTO postDTO : postDTOs) {
+            if (postDTO.getId().equals(postID)) {
+                if ("OFFLINE".equals(status)) {
+                    postDTO.setState(1);
+                } else if ("ONLINE".equals(status)) {
+                    postDTO.setState(0);
                 }
+                postDTO.setImageName(dtoService.getImageNameForPost(postDTO.getLastPostTraces().getDirection(), postDTO.getId()));
             }
         }
+        getRegionsDTO();
     }
 }

@@ -10,11 +10,15 @@ import java.util.Set;
 
 public interface DaoService {
 
+    Boolean getMarker();
+
     Set<StationDTO> getStationDTOs();
 
     List<PostDTO> getPostDTOs();
 
     List<RegionDTO> getRegionDTOs();
+
+    void setRegionDTOs(List<RegionDTO> regionDTOs);
 
     List<RserviceDTO> getRserviceDTOs();
 }

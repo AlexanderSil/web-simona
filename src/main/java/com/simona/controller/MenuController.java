@@ -31,7 +31,7 @@ public class MenuController {
 
     @GetMapping("/region/actual/info")
     public List<RegionDTO> updatePostInfo() {
-        return menuService.getActualRegions();
+        return menuService.getRegionsDTO();
     }
 
     @GetMapping("/updatePostStatus")

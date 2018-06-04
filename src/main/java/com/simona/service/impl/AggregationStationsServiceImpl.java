@@ -162,6 +162,7 @@ public class AggregationStationsServiceImpl implements AggregationStationsServic
     private PointDTO createPointDTOFromStationDTOs(Set<StationDTO> stationListDTO, LongLat longLat) {
         PointDTO pointDTO = new PointDTO();
 
+        //http://www.zlatov.net/publication/drevovidnyy-spisok.html
         String info = "<ul class=\"ul-treefree ul-dropfree\">";
         boolean grey = false;
         boolean green = false;

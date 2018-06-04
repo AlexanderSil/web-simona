@@ -55,6 +55,11 @@ public class DaoServiceImpl implements DaoService{
     private Boolean waitWhenLoadedRegionDTO = true;
     private Boolean waitWhenLoadedRserviceDTO = true;
 
+    @Override
+    public Boolean getMarker() {
+        return waitWhenLoadedPostDTO;
+    }
+
     public Set<StationDTO> getStationDTOs() {
         while (waitWhenLoadedStationDTO) {
             try {
@@ -90,6 +95,11 @@ public class DaoServiceImpl implements DaoService{
             log.info("Wait when wait When Loaded List Region from DB.");
         }
         return regionDtos;
+    }
+
+    @Override
+    public void setRegionDTOs(List<RegionDTO> regionDTOs) {
+        regionDtos = regionDTOs;
     }
 
     @Override

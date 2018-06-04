@@ -2,6 +2,7 @@ package com.simona.service.impl;
 
 import com.simona.model.*;
 import com.simona.model.dto.*;
+import com.simona.service.DaoService;
 import com.simona.service.DtoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ import java.util.TreeSet;
 public class DtoServiceImpl implements DtoService {
 
     @Autowired
-    private MenuServiceImpl monitoringService;
+    private DaoService daoService;
 
     @Override
     public Set<StationDTO> getStationDTOs(Iterable<Station> stations) {
@@ -142,7 +143,7 @@ public class DtoServiceImpl implements DtoService {
                 postTracesDTO.setDirection(0.0);
                 postDTO.setLastPostTraces(postTracesDTO);
             }
-            postDTO.setImageName(getImageNameForPost(postTracesDTO.getDirection()));
+            postDTO.setImageName(getImageNameForPost(postTracesDTO.getDirection(), postTracesDTO.getId()));
             postDTO.setInfo("Пост ID: " + post.getId()
                     + (postTracesDTO.getSpeed() != null ? ". Скорость: " + postTracesDTO.getSpeed().toString() + "km/h" : "")
                     + ". Long: " + postTracesDTO.getLongitude() + "; Lat: " + postTracesDTO.getLatitude());
@@ -331,340 +332,179 @@ public class DtoServiceImpl implements DtoService {
     }
 
     @Override
-    public PointDTO getPointsDTOFromPosts(PostTraces postTraces) {
+    public String getImageNameForPost(Double direction, Integer postID) {
+        String onlineOffline = "offline";
+        if (!daoService.getMarker()) {
+            List<PostDTO> postDTOs = daoService.getPostDTOs();
 
-        if (postTraces != null) {
-            PointDTO pointDTO = new PointDTO();
-
-            pointDTO.setLongitude(postTraces.getLongitude());
-            pointDTO.setLatitude(postTraces.getLatitude());
-
-            if (postTraces.getDirection() != null) {
-                if (357.5d <= postTraces.getDirection() || postTraces.getDirection() < 182.5d) {
-                    if (postTraces.getDirection() < 2.5d) {
-                        pointDTO.setImageName("pointer/0.png");
-                    }
-                    if (357.5d <= postTraces.getDirection()) {
-                        pointDTO.setImageName("pointer/0.png");
-                    } else if (2.5d <= postTraces.getDirection() && postTraces.getDirection() < 7.5d) {
-                        pointDTO.setImageName("pointer/5.png");
-                    } else if (7.5d <= postTraces.getDirection() && postTraces.getDirection() < 12.5d) {
-                        pointDTO.setImageName("pointer/10.png");
-                    } else if (12.5d <= postTraces.getDirection() && postTraces.getDirection() < 17.5d) {
-                        pointDTO.setImageName("pointer/15.png");
-                    } else if (17.5d <= postTraces.getDirection() && postTraces.getDirection() < 22.5d) {
-                        pointDTO.setImageName("pointer/20.png");
-                    } else if (22.5d <= postTraces.getDirection() && postTraces.getDirection() < 27.5d) {
-                        pointDTO.setImageName("pointer/25.png");
-                    } else if (27.5d <= postTraces.getDirection() && postTraces.getDirection() < 32.5d) {
-                        pointDTO.setImageName("pointer/30.png");
-                    } else if (32.5d <= postTraces.getDirection() && postTraces.getDirection() < 37.5d) {
-                        pointDTO.setImageName("pointer/35.png");
-                    } else if (37.5d <= postTraces.getDirection() && postTraces.getDirection() < 42.5d) {
-                        pointDTO.setImageName("pointer/40.png");
-                    } else if (42.5d <= postTraces.getDirection() && postTraces.getDirection() < 47.5d) {
-                        pointDTO.setImageName("pointer/45.png");
-                    } else if (47.5d <= postTraces.getDirection() && postTraces.getDirection() < 52.5d) {
-                        pointDTO.setImageName("pointer/50.png");
-                    } else if (52.5d <= postTraces.getDirection() && postTraces.getDirection() < 57.5d) {
-                        pointDTO.setImageName("pointer/55.png");
-                    } else if (57.5d <= postTraces.getDirection() && postTraces.getDirection() < 62.5d) {
-                        pointDTO.setImageName("pointer/60.png");
-                    } else if (62.5d <= postTraces.getDirection() && postTraces.getDirection() < 67.5d) {
-                        pointDTO.setImageName("pointer/65.png");
-                    } else if (67.5d <= postTraces.getDirection() && postTraces.getDirection() < 72.5d) {
-                        pointDTO.setImageName("pointer/70.png");
-                    } else if (72.5d <= postTraces.getDirection() && postTraces.getDirection() < 77.5d) {
-                        pointDTO.setImageName("pointer/75.png");
-                    } else if (77.5d <= postTraces.getDirection() && postTraces.getDirection() < 82.5d) {
-                        pointDTO.setImageName("pointer/80.png");
-                    } else if (82.5d <= postTraces.getDirection() && postTraces.getDirection() < 87.5d) {
-                        pointDTO.setImageName("pointer/85.png");
-                    } else if (87.5d <= postTraces.getDirection() && postTraces.getDirection() < 92.5d) {
-                        pointDTO.setImageName("pointer/90.png");
-                    } else if (92.5d <= postTraces.getDirection() && postTraces.getDirection() < 97.5d) {
-                        pointDTO.setImageName("pointer/95.png");
-                    } else if (97.5d <= postTraces.getDirection() && postTraces.getDirection() < 102.5d) {
-                        pointDTO.setImageName("pointer/100.png");
-                    } else if (102.5d <= postTraces.getDirection() && postTraces.getDirection() < 107.5d) {
-                        pointDTO.setImageName("pointer/105.png");
-                    } else if (107.5d <= postTraces.getDirection() && postTraces.getDirection() < 112.5d) {
-                        pointDTO.setImageName("pointer/110.png");
-                    } else if (112.5d <= postTraces.getDirection() && postTraces.getDirection() < 117.5d) {
-                        pointDTO.setImageName("pointer/115.png");
-                    } else if (117.5d <= postTraces.getDirection() && postTraces.getDirection() < 122.5d) {
-                        pointDTO.setImageName("pointer/120.png");
-                    } else if (122.5d <= postTraces.getDirection() && postTraces.getDirection() < 127.5d) {
-                        pointDTO.setImageName("pointer/125.png");
-                    } else if (127.5d <= postTraces.getDirection() && postTraces.getDirection() < 132.5d) {
-                        pointDTO.setImageName("pointer/130.png");
-                    } else if (132.5d <= postTraces.getDirection() && postTraces.getDirection() < 137.5d) {
-                        pointDTO.setImageName("pointer/135.png");
-                    } else if (137.5d <= postTraces.getDirection() && postTraces.getDirection() < 142.5d) {
-                        pointDTO.setImageName("pointer/140.png");
-                    } else if (142.5d <= postTraces.getDirection() && postTraces.getDirection() < 147.5d) {
-                        pointDTO.setImageName("pointer/145.png");
-                    } else if (147.5d <= postTraces.getDirection() && postTraces.getDirection() < 152.5d) {
-                        pointDTO.setImageName("pointer/150.png");
-                    } else if (152.5d <= postTraces.getDirection() && postTraces.getDirection() < 157.5d) {
-                        pointDTO.setImageName("pointer/155.png");
-                    } else if (157.5d <= postTraces.getDirection() && postTraces.getDirection() < 162.5d) {
-                        pointDTO.setImageName("pointer/160.png");
-                    } else if (162.5d <= postTraces.getDirection() && postTraces.getDirection() < 167.5d) {
-                        pointDTO.setImageName("pointer/165.png");
-                    } else if (167.5d <= postTraces.getDirection() && postTraces.getDirection() < 172.5d) {
-                        pointDTO.setImageName("pointer/170.png");
-                    } else if (172.5d <= postTraces.getDirection() && postTraces.getDirection() < 177.5d) {
-                        pointDTO.setImageName("pointer/175.png");
-                    } else if (177.5d <= postTraces.getDirection() && postTraces.getDirection() < 182.5d) {
-                        pointDTO.setImageName("pointer/180.png");
-                    }
-                } else {
-                    if (182.5d <= postTraces.getDirection() && postTraces.getDirection() < 187.5d) {
-                        pointDTO.setImageName("pointer/185.png");
-                    } else if (187.5d <= postTraces.getDirection() && postTraces.getDirection() < 192.5d) {
-                        pointDTO.setImageName("pointer/190.png");
-                    } else if (192.5d <= postTraces.getDirection() && postTraces.getDirection() < 197.5d) {
-                        pointDTO.setImageName("pointer/195.png");
-                    } else if (197.5d <= postTraces.getDirection() && postTraces.getDirection() < 202.5d) {
-                        pointDTO.setImageName("pointer/200.png");
-                    } else if (202.5d <= postTraces.getDirection() && postTraces.getDirection() < 207.5d) {
-                        pointDTO.setImageName("pointer/205.png");
-                    } else if (207.5d <= postTraces.getDirection() && postTraces.getDirection() < 212.5d) {
-                        pointDTO.setImageName("pointer/210.png");
-                    } else if (212.5d <= postTraces.getDirection() && postTraces.getDirection() < 217.5d) {
-                        pointDTO.setImageName("pointer/215.png");
-                    } else if (217.5d <= postTraces.getDirection() && postTraces.getDirection() < 222.5d) {
-                        pointDTO.setImageName("pointer/220.png");
-                    } else if (222.5d <= postTraces.getDirection() && postTraces.getDirection() < 227.5d) {
-                        pointDTO.setImageName("pointer/225.png");
-                    } else if (227.5d <= postTraces.getDirection() && postTraces.getDirection() < 232.5d) {
-                        pointDTO.setImageName("pointer/230.png");
-                    } else if (232.5d <= postTraces.getDirection() && postTraces.getDirection() < 237.5d) {
-                        pointDTO.setImageName("pointer/235.png");
-                    } else if (237.5d <= postTraces.getDirection() && postTraces.getDirection() < 242.5d) {
-                        pointDTO.setImageName("pointer/240.png");
-                    } else if (242.5d <= postTraces.getDirection() && postTraces.getDirection() < 247.5d) {
-                        pointDTO.setImageName("pointer/245.png");
-                    } else if (247.5d <= postTraces.getDirection() && postTraces.getDirection() < 252.5d) {
-                        pointDTO.setImageName("pointer/250.png");
-                    } else if (252.5d <= postTraces.getDirection() && postTraces.getDirection() < 257.5d) {
-                        pointDTO.setImageName("pointer/255.png");
-                    } else if (257.5d <= postTraces.getDirection() && postTraces.getDirection() < 262.5d) {
-                        pointDTO.setImageName("pointer/260.png");
-                    } else if (262.5d <= postTraces.getDirection() && postTraces.getDirection() < 267.5d) {
-                        pointDTO.setImageName("pointer/265.png");
-                    } else if (267.5d <= postTraces.getDirection() && postTraces.getDirection() < 272.5d) {
-                        pointDTO.setImageName("pointer/270.png");
-                    } else if (272.5d <= postTraces.getDirection() && postTraces.getDirection() < 277.5d) {
-                        pointDTO.setImageName("pointer/275.png");
-                    } else if (277.5d <= postTraces.getDirection() && postTraces.getDirection() < 282.5d) {
-                        pointDTO.setImageName("pointer/280.png");
-                    } else if (282.5d <= postTraces.getDirection() && postTraces.getDirection() < 287.5d) {
-                        pointDTO.setImageName("pointer/285.png");
-                    } else if (287.5d <= postTraces.getDirection() && postTraces.getDirection() < 292.5d) {
-                        pointDTO.setImageName("pointer/290.png");
-                    } else if (292.5d <= postTraces.getDirection() && postTraces.getDirection() < 297.5d) {
-                        pointDTO.setImageName("pointer/295.png");
-                    } else if (297.5d <= postTraces.getDirection() && postTraces.getDirection() < 302.5d) {
-                        pointDTO.setImageName("pointer/300.png");
-                    } else if (302.5d <= postTraces.getDirection() && postTraces.getDirection() < 307.5d) {
-                        pointDTO.setImageName("pointer/305.png");
-                    } else if (307.5d <= postTraces.getDirection() && postTraces.getDirection() < 312.5d) {
-                        pointDTO.setImageName("pointer/310.png");
-                    } else if (312.5d <= postTraces.getDirection() && postTraces.getDirection() < 317.5d) {
-                        pointDTO.setImageName("pointer/315.png");
-                    } else if (317.5d <= postTraces.getDirection() && postTraces.getDirection() < 322.5d) {
-                        pointDTO.setImageName("pointer/320.png");
-                    } else if (322.5d <= postTraces.getDirection() && postTraces.getDirection() < 327.5d) {
-                        pointDTO.setImageName("pointer/325.png");
-                    } else if (327.5d <= postTraces.getDirection() && postTraces.getDirection() < 332.5d) {
-                        pointDTO.setImageName("pointer/330.png");
-                    } else if (332.5d <= postTraces.getDirection() && postTraces.getDirection() < 337.5d) {
-                        pointDTO.setImageName("pointer/335.png");
-                    } else if (337.5d <= postTraces.getDirection() && postTraces.getDirection() < 342.5d) {
-                        pointDTO.setImageName("pointer/340.png");
-                    } else if (342.5d <= postTraces.getDirection() && postTraces.getDirection() < 347.5d) {
-                        pointDTO.setImageName("pointer/345.png");
-                    } else if (347.5d <= postTraces.getDirection() && postTraces.getDirection() < 352.5d) {
-                        pointDTO.setImageName("pointer/350.png");
-                    } else if (352.5d <= postTraces.getDirection() && postTraces.getDirection() < 357.5d) {
-                        pointDTO.setImageName("pointer/355.png");
+            for (PostDTO postDTO : postDTOs) {
+                if (postDTO.getId().equals(postID)) {
+                    if (postDTO.getState() == null) {
+                        onlineOffline = "offline";
+                    } else if (postDTO.getState().equals(0)) {//"ONLINE"
+                        onlineOffline = "online";
+                    } else if (postDTO.getState().equals(1)){//"OFFLINE"
+                        onlineOffline = "offline";
                     }
                 }
-            } else {
-                pointDTO.setImageName("pointer/0.png");
             }
-            pointDTO.setInfo("Пост ID: " + postTraces.getPost().getId());
-
-            if (postTraces.getSpeed() != null) {
-                pointDTO.setInfo(pointDTO.getInfo() + ". Скорость: " + postTraces.getSpeed().toString() + "km/h");
-            }
-
-            pointDTO.setInfo(pointDTO.getInfo() + ". Long: " + postTraces.getLongitude() + "; Lat: " + postTraces.getLatitude());
-
-            return pointDTO;
         }
-        return null;
-    }
 
-    @Override
-    public String getImageNameForPost(Double direction) {
         if (direction != null) {
             if (357.5d <= direction || direction < 182.5d) {
                 if (direction < 2.5d) {
-                    return "pointer/0.png";
+                    return "pointer/" + onlineOffline + "/0.png";
                 }
                 if (357.5d <= direction) {
-                    return "pointer/0.png";
+                    return "pointer/" + onlineOffline + "/0.png";
                 } else if (2.5d <= direction && direction < 7.5d) {
-                    return "pointer/5.png";
+                    return "pointer/" + onlineOffline + "/5.png";
                 } else if (7.5d <= direction && direction < 12.5d) {
-                    return "pointer/10.png";
+                    return "pointer/" + onlineOffline + "/10.png";
                 } else if (12.5d <= direction && direction < 17.5d) {
-                    return "pointer/15.png";
+                    return "pointer/" + onlineOffline + "/15.png";
                 } else if (17.5d <= direction && direction < 22.5d) {
-                    return "pointer/20.png";
+                    return "pointer/" + onlineOffline + "/20.png";
                 } else if (22.5d <= direction && direction < 27.5d) {
-                    return "pointer/25.png";
+                    return "pointer/" + onlineOffline + "/25.png";
                 } else if (27.5d <= direction && direction < 32.5d) {
-                    return "pointer/30.png";
+                    return "pointer/" + onlineOffline + "/30.png";
                 } else if (32.5d <= direction && direction < 37.5d) {
-                    return "pointer/35.png";
+                    return "pointer/" + onlineOffline + "/35.png";
                 } else if (37.5d <= direction && direction < 42.5d) {
-                    return "pointer/40.png";
+                    return "pointer/" + onlineOffline + "/40.png";
                 } else if (42.5d <= direction && direction < 47.5d) {
-                    return "pointer/45.png";
+                    return "pointer/" + onlineOffline + "/45.png";
                 } else if (47.5d <= direction && direction < 52.5d) {
-                    return "pointer/50.png";
+                    return "pointer/" + onlineOffline + "/50.png";
                 } else if (52.5d <= direction && direction < 57.5d) {
-                    return "pointer/55.png";
+                    return "pointer/" + onlineOffline + "/55.png";
                 } else if (57.5d <= direction && direction < 62.5d) {
-                    return "pointer/60.png";
+                    return "pointer/" + onlineOffline + "/60.png";
                 } else if (62.5d <= direction && direction < 67.5d) {
-                    return "pointer/65.png";
+                    return "pointer/" + onlineOffline + "/65.png";
                 } else if (67.5d <= direction && direction < 72.5d) {
-                    return "pointer/70.png";
+                    return "pointer/" + onlineOffline + "/70.png";
                 } else if (72.5d <= direction && direction < 77.5d) {
-                    return "pointer/75.png";
+                    return "pointer/" + onlineOffline + "/75.png";
                 } else if (77.5d <= direction && direction < 82.5d) {
-                    return "pointer/80.png";
+                    return "pointer/" + onlineOffline + "/80.png";
                 } else if (82.5d <= direction && direction < 87.5d) {
-                    return "pointer/85.png";
+                    return "pointer/" + onlineOffline + "/85.png";
                 } else if (87.5d <= direction && direction < 92.5d) {
-                    return "pointer/90.png";
+                    return "pointer/" + onlineOffline + "/90.png";
                 } else if (92.5d <= direction && direction < 97.5d) {
-                    return "pointer/95.png";
+                    return "pointer/" + onlineOffline + "/95.png";
                 } else if (97.5d <= direction && direction < 102.5d) {
-                    return "pointer/100.png";
+                    return "pointer/" + onlineOffline + "/100.png";
                 } else if (102.5d <= direction && direction < 107.5d) {
-                    return "pointer/105.png";
+                    return "pointer/" + onlineOffline + "/105.png";
                 } else if (107.5d <= direction && direction < 112.5d) {
-                    return "pointer/110.png";
+                    return "pointer/" + onlineOffline + "/110.png";
                 } else if (112.5d <= direction && direction < 117.5d) {
-                    return "pointer/115.png";
+                    return "pointer/" + onlineOffline + "/115.png";
                 } else if (117.5d <= direction && direction < 122.5d) {
-                    return "pointer/120.png";
+                    return "pointer/" + onlineOffline + "/120.png";
                 } else if (122.5d <= direction && direction < 127.5d) {
-                    return "pointer/125.png";
+                    return "pointer/" + onlineOffline + "/125.png";
                 } else if (127.5d <= direction && direction < 132.5d) {
-                    return "pointer/130.png";
+                    return "pointer/" + onlineOffline + "/130.png";
                 } else if (132.5d <= direction && direction < 137.5d) {
-                    return "pointer/135.png";
+                    return "pointer/" + onlineOffline + "/135.png";
                 } else if (137.5d <= direction && direction < 142.5d) {
-                    return "pointer/140.png";
+                    return "pointer/" + onlineOffline + "/140.png";
                 } else if (142.5d <= direction && direction < 147.5d) {
-                    return "pointer/145.png";
+                    return "pointer/" + onlineOffline + "/145.png";
                 } else if (147.5d <= direction && direction < 152.5d) {
-                    return "pointer/150.png";
+                    return "pointer/" + onlineOffline + "/150.png";
                 } else if (152.5d <= direction && direction < 157.5d) {
-                    return "pointer/155.png";
+                    return "pointer/" + onlineOffline + "/155.png";
                 } else if (157.5d <= direction && direction < 162.5d) {
-                    return "pointer/160.png";
+                    return "pointer/" + onlineOffline + "/160.png";
                 } else if (162.5d <= direction && direction < 167.5d) {
-                    return "pointer/165.png";
+                    return "pointer/" + onlineOffline + "/165.png";
                 } else if (167.5d <= direction && direction < 172.5d) {
-                    return "pointer/170.png";
+                    return "pointer/" + onlineOffline + "/170.png";
                 } else if (172.5d <= direction && direction < 177.5d) {
-                    return "pointer/175.png";
+                    return "pointer/" + onlineOffline + "/175.png";
                 } else if (177.5d <= direction && direction < 182.5d) {
-                    return "pointer/180.png";
+                    return "pointer/" + onlineOffline + "/180.png";
                 }
             } else {
                 if (182.5d <= direction && direction < 187.5d) {
-                    return "pointer/185.png";
+                    return "pointer/" + onlineOffline + "/185.png";
                 } else if (187.5d <= direction && direction < 192.5d) {
-                    return "pointer/190.png";
+                    return "pointer/" + onlineOffline + "/190.png";
                 } else if (192.5d <= direction && direction < 197.5d) {
-                    return "pointer/195.png";
+                    return "pointer/" + onlineOffline + "/195.png";
                 } else if (197.5d <= direction && direction < 202.5d) {
-                    return "pointer/200.png";
+                    return "pointer/" + onlineOffline + "/200.png";
                 } else if (202.5d <= direction && direction < 207.5d) {
-                    return "pointer/205.png";
+                    return "pointer/" + onlineOffline + "/205.png";
                 } else if (207.5d <= direction && direction < 212.5d) {
-                    return "pointer/210.png";
+                    return "pointer/" + onlineOffline + "/210.png";
                 } else if (212.5d <= direction && direction < 217.5d) {
-                    return "pointer/215.png";
+                    return "pointer/" + onlineOffline + "/215.png";
                 } else if (217.5d <= direction && direction < 222.5d) {
-                    return "pointer/220.png";
+                    return "pointer/" + onlineOffline + "/220.png";
                 } else if (222.5d <= direction && direction < 227.5d) {
-                    return "pointer/225.png";
+                    return "pointer/" + onlineOffline + "/225.png";
                 } else if (227.5d <= direction && direction < 232.5d) {
-                    return "pointer/230.png";
+                    return "pointer/" + onlineOffline + "/230.png";
                 } else if (232.5d <= direction && direction < 237.5d) {
-                    return "pointer/235.png";
+                    return "pointer/" + onlineOffline + "/235.png";
                 } else if (237.5d <= direction && direction < 242.5d) {
-                    return "pointer/240.png";
+                    return "pointer/" + onlineOffline + "/240.png";
                 } else if (242.5d <= direction && direction < 247.5d) {
-                    return "pointer/245.png";
+                    return "pointer/" + onlineOffline + "/245.png";
                 } else if (247.5d <= direction && direction < 252.5d) {
-                    return "pointer/250.png";
+                    return "pointer/" + onlineOffline + "/250.png";
                 } else if (252.5d <= direction && direction < 257.5d) {
-                    return "pointer/255.png";
+                    return "pointer/" + onlineOffline + "/255.png";
                 } else if (257.5d <= direction && direction < 262.5d) {
-                    return "pointer/260.png";
+                    return "pointer/" + onlineOffline + "/260.png";
                 } else if (262.5d <= direction && direction < 267.5d) {
-                    return "pointer/265.png";
+                    return "pointer/" + onlineOffline + "/265.png";
                 } else if (267.5d <= direction && direction < 272.5d) {
-                    return "pointer/270.png";
+                    return "pointer/" + onlineOffline + "/270.png";
                 } else if (272.5d <= direction && direction < 277.5d) {
-                    return "pointer/275.png";
+                    return "pointer/" + onlineOffline + "/275.png";
                 } else if (277.5d <= direction && direction < 282.5d) {
-                    return "pointer/280.png";
+                    return "pointer/" + onlineOffline + "/280.png";
                 } else if (282.5d <= direction && direction < 287.5d) {
-                    return "pointer/285.png";
+                    return "pointer/" + onlineOffline + "/285.png";
                 } else if (287.5d <= direction && direction < 292.5d) {
-                    return "pointer/290.png";
+                    return "pointer/" + onlineOffline + "/290.png";
                 } else if (292.5d <= direction && direction < 297.5d) {
-                    return "pointer/295.png";
+                    return "pointer/" + onlineOffline + "/295.png";
                 } else if (297.5d <= direction && direction < 302.5d) {
-                    return "pointer/300.png";
+                    return "pointer/" + onlineOffline + "/300.png";
                 } else if (302.5d <= direction && direction < 307.5d) {
-                    return "pointer/305.png";
+                    return "pointer/" + onlineOffline + "/305.png";
                 } else if (307.5d <= direction && direction < 312.5d) {
-                    return "pointer/310.png";
+                    return "pointer/" + onlineOffline + "/310.png";
                 } else if (312.5d <= direction && direction < 317.5d) {
-                    return "pointer/315.png";
+                    return "pointer/" + onlineOffline + "/315.png";
                 } else if (317.5d <= direction && direction < 322.5d) {
-                    return "pointer/320.png";
+                    return "pointer/" + onlineOffline + "/320.png";
                 } else if (322.5d <= direction && direction < 327.5d) {
-                    return "pointer/325.png";
+                    return "pointer/" + onlineOffline + "/325.png";
                 } else if (327.5d <= direction && direction < 332.5d) {
-                    return "pointer/330.png";
+                    return "pointer/" + onlineOffline + "/330.png";
                 } else if (332.5d <= direction && direction < 337.5d) {
-                    return "pointer/335.png";
+                    return "pointer/" + onlineOffline + "/335.png";
                 } else if (337.5d <= direction && direction < 342.5d) {
-                    return "pointer/340.png";
+                    return "pointer/" + onlineOffline + "/340.png";
                 } else if (342.5d <= direction && direction < 347.5d) {
-                    return "pointer/345.png";
+                    return "pointer/" + onlineOffline + "/345.png";
                 } else if (347.5d <= direction && direction < 352.5d) {
-                    return "pointer/350.png";
+                    return "pointer/" + onlineOffline + "/350.png";
                 } else if (352.5d <= direction && direction < 357.5d) {
-                    return "pointer/355.png";
+                    return "pointer/" + onlineOffline + "/355.png";
                 }
             }
         }
-        return "pointer/0.png";
+        return "pointer/" + onlineOffline + "/0.png";
     }
 
 

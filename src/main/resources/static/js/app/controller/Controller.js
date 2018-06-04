@@ -291,7 +291,7 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
             $scope.loadDataFromDB();//get data from data base.
             if ($scope.selectedObject.mrmsIds.length != 0) {
                 subscribePostServerSymonaWebSocket();
-                //sendToSocket({func: "SUBSC_CONTROL_POINT"});//subscribe to all control points
+                sendToSocket({func: "SUBSC_CONTROL_POINT"});//subscribe to all control points
             } else {
                 getRegionsWithMonitoringStations();
             }
@@ -452,6 +452,10 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                             if (updatedObject.status === "OFFLINE") {
                                 $scope.regions[0].postDTOTemps[0].iconName = "blackCar.png";
                             }
+
+                            $scope.loadDataFromDB();
+
+
                         },
                         function error(response) {
                             $scope.message = '';
@@ -466,7 +470,7 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
                 MonitoringService.updatePostLocation($scope.view.zoom, $scope.selectedObject.mrmsIds, updatedObject)
                     .then(function success(response) {
                             if (response.data.length > 0) {
-                                showNewPosts(response.data);//todo change to showNewPosts
+                                showNewPosts(response.data);
                             }
                         },
                         function error(response) {
@@ -532,9 +536,9 @@ simonaApp.controller('MainController', ['$scope', '$http', '$location', 'esriLoa
          **********************************************************************************************************/
         var socket;
         var createSocket = function() {
-            var res = new WebSocket('ws://192.168.1.88:10102/');
+            // var res = new WebSocket('ws://192.168.1.88:10102/');
             // var res = new WebSocket('ws://0.0.0.0:10102/');
-            // var res = new WebSocket('ws://127.0.0.1:10102/');
+            var res = new WebSocket('ws://127.0.0.1:10102/');
             res.onopen = function() {
                 console.log("Connect Websocket to Symona server.");
             };

@@ -45,8 +45,8 @@ public class PostsServiceImpl implements PostsService {
                 postDTO.setInfo("Пост ID: " + postDTO.getId()
                         + (speed!= null ? ". Скорость: " + speed + "km/h" : "" )
                         + ". Long: " + coordLon + "; Lat: " + coordLat);
-                if (direction != null || direction != 0) {
-                    postDTO.setImageName(dtoService.getImageNameForPost(direction));
+                if (direction != null) {
+                    postDTO.setImageName(dtoService.getImageNameForPost(direction, postDTO.getId()));
                 }
             }
         }
